@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<!-- Android App Tags -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<!-- Mobile Viewport & PWA Tags -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <!-- PWA & Apple Standalone Meta Tags -->
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -61,16 +61,20 @@
 
   * { box-sizing: border-box; }
 
-  html, body {
+  html {
     height: 100%;
-    margin: 0;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
+    min-height: 100%;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+    margin: 0;
     background: var(--bg);
     color: var(--ink);
     font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
   }
 
   button, input, select, textarea { font: inherit; color: inherit; }
@@ -83,7 +87,13 @@
     padding: 10px 14px;
     width: 100%;
     outline: none;
+    font-size: 16px !important; /* CRITICAL: Prevents iOS Safari from zooming into the input and breaking layout */
+    -webkit-text-size-adjust: 100%;
+    -webkit-user-select: text !important;
+    user-select: text !important;
+    touch-action: manipulation;
     font-weight: 500;
+    box-sizing: border-box;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
   input:focus, select:focus, textarea:focus {
@@ -102,6 +112,7 @@
     padding: 10px 16px;
     cursor: pointer;
     white-space: nowrap;
+    touch-action: manipulation;
     transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
     box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   }
@@ -119,13 +130,19 @@
 
   /* ---------------------------------------------------------- login */
   .login {
-    height: 100%;
-    display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: 26px;
+    min-height: 100%;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
     background: radial-gradient(1200px 600px at 50% 0%, #1e293b 0%, #090d16 100%);
-    padding: 24px;
+    padding: calc(env(safe-area-inset-top, 0px) + 24px) 16px calc(env(safe-area-inset-bottom, 0px) + 40px);
+    box-sizing: border-box;
   }
   .login h1 {
     margin: 0;
@@ -159,7 +176,15 @@
   .login-box .btn { height: 46px; border-radius: 10px; }
 
   /* ---------------------------------------------------------- shell */
-  #shell { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  #shell {
+    height: 100vh;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
 
   #sidebar {
     width: 272px;
@@ -200,7 +225,17 @@
   .side-foot select { background: #1e293b; border-color: #334155; color: #fff; width: 170px; border-radius: 8px; }
   #clock { font-size: 14px; font-weight: 700; color: #f8fafc; }
 
-  #main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; overflow: hidden; padding: 14px; position: relative; height: 100%; }
+  #main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 14px;
+    position: relative;
+    height: 100%;
+    box-sizing: border-box;
+  }
   .screen { flex: 1 1 auto; min-height: 0; display: none; flex-direction: column; height: 100%; overflow: hidden; }
   .screen.active { display: flex; }
 
@@ -490,7 +525,7 @@
 
     /* Main Content Area */
     #main {
-      padding: 60px 10px 10px;
+      padding: calc(env(safe-area-inset-top, 0px) + 60px) 12px calc(env(safe-area-inset-bottom, 0px) + 20px);
     }
 
     /* Menu Toggle Button */
@@ -499,8 +534,8 @@
       align-items: center;
       justify-content: center;
       position: fixed;
-      top: 10px;
-      left: 10px;
+      top: calc(env(safe-area-inset-top, 0px) + 10px);
+      left: calc(env(safe-area-inset-left, 0px) + 10px);
       width: 44px;
       height: 44px;
       z-index: 150;
@@ -523,8 +558,13 @@
     #sidebarVeil.active { display: block; }
     
     /* Login Fixes */
-    .login-box { padding: 20px 16px; }
-    .login h1 { font-size: 22px; }
+    .login-box {
+      width: 100% !important;
+      max-width: 400px !important;
+      padding: 22px 18px !important;
+      box-sizing: border-box !important;
+    }
+    .login h1 { font-size: 20px; }
 
     #screenScanner .panel { border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
     .scan-btn-grid { display: flex; gap: 10px; margin-top: 15px; width: 100%; }
@@ -574,10 +614,17 @@
     .vtotals .cell { justify-content: space-between; }
     .vtotals .cell.big { margin-left: 0; }
     
-    /* Accounts Stacking */
+    /* Accounts & Forms Stacking */
     .accounts { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: minmax(0, 1fr); }
-    .field { grid-template-columns: 120px 1fr; }
+    .field {
+      grid-template-columns: 1fr !important;
+      gap: 6px !important;
+    }
+    .field > label {
+      text-align: left !important;
+      font-size: 12px !important;
+    }
   }
 </style>
 </head>
@@ -602,17 +649,22 @@
       </div>
     </div>
 
-    <!-- 1-Tap Copy Button -->
-    <button class="btn ghost" type="button" id="btnCopyDeviceToken" style="width:100%; margin-bottom:14px; border-color:var(--gold); color:var(--gold); display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700;">
-      📋 COPY DEVICE ID
-    </button>
+    <!-- 1-Tap Copy Button & 1-Tap Paste Button -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
+      <button class="btn ghost" type="button" id="btnCopyDeviceToken" style="width:100%; border-color:var(--gold); color:var(--gold); display:flex; align-items:center; justify-content:center; gap:6px; font-weight:700; font-size:13px; padding:12px 4px;">
+        📋 COPY ID
+      </button>
+      <button class="btn ghost" type="button" id="btnPasteActivationKey" style="width:100%; border-color:var(--blue); color:var(--blue); display:flex; align-items:center; justify-content:center; gap:6px; font-weight:700; font-size:13px; padding:12px 4px;">
+        📥 PASTE KEY
+      </button>
+    </div>
 
     <!-- Key Input -->
     <div style="text-align:left; margin-bottom:12px;">
       <label style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; display:block; margin-bottom:6px;">
         16-Character Activation Key
       </label>
-      <input id="activationKeyInput" type="text" placeholder="PJ-XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" style="width:100%; text-align:center; font-family:monospace; font-size:16px; letter-spacing:2px; text-transform:uppercase;">
+      <input id="activationKeyInput" type="text" inputmode="text" placeholder="PJ-XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" style="width:100%; text-align:center; font-family:monospace; font-size:16px; letter-spacing:2px; text-transform:uppercase;">
     </div>
 
     <!-- Activate Button -->
@@ -1721,7 +1773,130 @@ const PalakIOSHardwareBridge = {
       localStorage.setItem(this.KEY_STORAGE_KEY, expected);
       return { success: true };
     }
+    // Also accept raw without hyphens or prefix
+    var raw = cleanEntered.replace(/[^0-9A-Z]/g, "");
+    if (raw.startsWith("PJ")) raw = raw.slice(2);
+    if (raw.length === 12) {
+      var norm = "PJ-" + raw.slice(0, 4) + "-" + raw.slice(4, 8) + "-" + raw.slice(8, 12);
+      if (norm === expected) {
+        localStorage.setItem(this.KEY_STORAGE_KEY, expected);
+        return { success: true };
+      }
+    }
     return { success: false, error: "Invalid activation key for this device." };
+  }
+};
+
+/* ============================================================ iOS Apple Face ID / Touch ID Bridge */
+const PalakAppleBiometrics = {
+  isSupported: function() {
+    return Boolean(
+      window.PublicKeyCredential &&
+      typeof window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === "function"
+    );
+  },
+
+  isAvailable: async function() {
+    if (!this.isSupported()) return false;
+    try {
+      return await window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    } catch (e) {
+      return false;
+    }
+  },
+
+  register: async function(username) {
+    if (!this.isSupported()) return false;
+    try {
+      const challenge = new Uint8Array(32);
+      window.crypto.getRandomValues(challenge);
+      const userId = new Uint8Array(16);
+      window.crypto.getRandomValues(userId);
+
+      const credential = await navigator.credentials.create({
+        publicKey: {
+          challenge: challenge,
+          rp: { name: "Palak Jewellers CRM", id: window.location.hostname },
+          user: {
+            id: userId,
+            name: username || "Living",
+            displayName: username || "Palak Administrator"
+          },
+          pubKeyCredParams: [
+            { type: "public-key", alg: -7 },  // ES256
+            { type: "public-key", alg: -257 } // RS256
+          ],
+          authenticatorSelection: {
+            authenticatorAttachment: "platform", // Enforce Apple Secure Enclave Face ID / Touch ID
+            userVerification: "required"
+          },
+          timeout: 60000
+        }
+      });
+
+      if (credential && credential.id) {
+        localStorage.setItem("plk_apple_bio_cred", credential.id);
+        localStorage.setItem("plk_apple_bio_user", username || "Living");
+        return true;
+      }
+    } catch (err) {
+      console.warn("[Apple Bio] Registration cancelled or error:", err);
+    }
+    return false;
+  },
+
+  authenticate: async function() {
+    if (!this.isSupported()) {
+      alert("Biometric authentication (Face ID) is not supported on this browser.");
+      return;
+    }
+    try {
+      const challenge = new Uint8Array(32);
+      window.crypto.getRandomValues(challenge);
+      const credId = localStorage.getItem("plk_apple_bio_cred");
+      const storedUser = localStorage.getItem("plk_apple_bio_user") || "Living";
+
+      if (!credId) {
+        const ok = await this.register(storedUser);
+        if (ok && window.onBiometricSuccess) {
+          window.onBiometricSuccess(storedUser);
+        }
+        return;
+      }
+
+      let rawId;
+      try {
+        const bin = atob(credId.replace(/-/g, "+").replace(/_/g, "/"));
+        rawId = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) rawId[i] = bin.charCodeAt(i);
+      } catch (e) {
+        rawId = new TextEncoder().encode(credId);
+      }
+
+      const assertion = await navigator.credentials.get({
+        publicKey: {
+          challenge: challenge,
+          rpId: window.location.hostname,
+          allowCredentials: [{
+            type: "public-key",
+            id: rawId
+          }],
+          userVerification: "required",
+          timeout: 60000
+        }
+      });
+
+      if (assertion) {
+        if (window.onBiometricSuccess) {
+          window.onBiometricSuccess(storedUser);
+        }
+      }
+    } catch (err) {
+      console.warn("[Apple Bio] Verification cancelled or failed:", err);
+      if (err.name !== "NotAllowedError" && err.name !== "AbortError") {
+        alert("Face ID verification was not successful. Please log in with your password.");
+      }
+    }
   }
 };
 
@@ -1745,7 +1920,7 @@ function isDeviceAuthorized() {
 function showDeviceLockScreen() {
   const lock = $("deviceLockScreen");
   if (lock) {
-    lock.style.display = "grid";
+    lock.style.display = "flex";
     lock.hidden = false;
   }
   const login = $("loginScreen");
@@ -1833,7 +2008,7 @@ async function handleCopyDeviceToken() {
     const origHtml = btn.innerHTML;
     const origBorder = btn.style.borderColor;
     const origColor = btn.style.color;
-    btn.innerHTML = "✅ COPIED TO CLIPBOARD!";
+    btn.innerHTML = "✅ COPIED!";
     btn.style.borderColor = "var(--green, #25D366)";
     btn.style.color = "var(--green, #25D366)";
     setTimeout(() => {
@@ -1841,6 +2016,37 @@ async function handleCopyDeviceToken() {
       btn.style.borderColor = origBorder;
       btn.style.color = origColor;
     }, 2500);
+  }
+}
+
+async function handlePasteActivationKey() {
+  const input = $("activationKeyInput");
+  const btn = $("btnPasteActivationKey");
+  let pasted = "";
+  try {
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      pasted = await navigator.clipboard.readText();
+    }
+  } catch (e) {
+    console.warn("navigator.clipboard.readText failed:", e);
+  }
+  if (!pasted) {
+    pasted = prompt("Paste your 16-Character Activation Key below:") || "";
+  }
+  if (pasted && input) {
+    input.value = formatActivationKeyInput(pasted);
+    input.focus();
+    if (btn) {
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = "✅ PASTED!";
+      btn.style.borderColor = "var(--green, #25D366)";
+      btn.style.color = "var(--green, #25D366)";
+      setTimeout(() => {
+        btn.innerHTML = origHtml;
+        btn.style.borderColor = "var(--blue)";
+        btn.style.color = "var(--blue)";
+      }, 2000);
+    }
   }
 }
 
@@ -1906,9 +2112,13 @@ async function handleDeviceActivation() {
           login.hidden = false;
           login.style.display = "";
         }
-        const bio = $("bioBtn");
-        if (bio && window.Android && window.Android.authenticateBiometric) {
-          bio.style.display = "block";
+        if (window.setupBiometrics) {
+          window.setupBiometrics();
+        } else {
+          const bio = $("bioBtn");
+          if (bio && window.Android && window.Android.authenticateBiometric) {
+            bio.style.display = "block";
+          }
         }
         const userInp = $("loginUser");
         if (userInp) userInp.focus();
@@ -1941,6 +2151,8 @@ $("loginForm").addEventListener("submit", async event => {
   await enterApp();
   if (window.Android && window.Android.registerBiometric) {
     window.Android.registerBiometric(username);
+  } else if (typeof PalakAppleBiometrics !== "undefined" && PalakAppleBiometrics.isSupported()) {
+    PalakAppleBiometrics.register(username);
   }
 });
 async function enterApp() {
@@ -3176,12 +3388,26 @@ function wireLogo(imageId, wordmarkId) {
     if (c === 0) addCodePopup(r);
   });
 
-  // Biometric Logic
+  // Biometric Logic (Android Fingerprint + Apple Face ID / Touch ID)
   const bioBtn = $("bioBtn");
-  if (window.Android && window.Android.authenticateBiometric) {
-    bioBtn.style.display = "block";
-    bioBtn.onclick = () => window.Android.authenticateBiometric();
+  async function initBiometrics() {
+    if (!bioBtn) return;
+    if (window.Android && window.Android.authenticateBiometric) {
+      bioBtn.style.display = "block";
+      bioBtn.innerHTML = "&#129522; BIOMETRIC LOGIN";
+      bioBtn.onclick = () => window.Android.authenticateBiometric();
+    } else if (typeof PalakAppleBiometrics !== "undefined" && PalakAppleBiometrics.isSupported()) {
+      const avail = await PalakAppleBiometrics.isAvailable();
+      if (avail) {
+        bioBtn.style.display = "block";
+        bioBtn.innerHTML = "🙂 FACE ID / TOUCH ID LOGIN";
+        bioBtn.onclick = () => PalakAppleBiometrics.authenticate();
+      }
+    }
   }
+  initBiometrics();
+  window.setupBiometrics = initBiometrics;
+
   window.onBiometricSuccess = async (username) => {
     if (!isDeviceAuthorized()) {
       showDeviceLockScreen();
@@ -3218,7 +3444,7 @@ function wireLogo(imageId, wordmarkId) {
       show("home");
     }
   };
-  window.onBiometricUnavailable = () => { bioBtn.style.display = "none"; };
+  window.onBiometricUnavailable = () => { if (bioBtn) bioBtn.style.display = "none"; };
 
   window.lockApp = () => {
     if (!isDeviceAuthorized()) {
@@ -3233,6 +3459,8 @@ function wireLogo(imageId, wordmarkId) {
   // Wire Device Lock Screen events
   const btnCopy = $("btnCopyDeviceToken");
   if (btnCopy) btnCopy.onclick = handleCopyDeviceToken;
+  const btnPaste = $("btnPasteActivationKey");
+  if (btnPaste) btnPaste.onclick = handlePasteActivationKey;
   const btnActivate = $("btnActivateDevice");
   if (btnActivate) btnActivate.onclick = handleDeviceActivation;
   const keyInput = $("activationKeyInput");
