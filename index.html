@@ -1679,7 +1679,6 @@ const PalakIOSHardwareBridge = {
     if (existing && existing.startsWith("PLK-")) {
       return existing;
     }
-    // High-entropy iOS hardware fingerprint
     var rnd = "";
     if (window.crypto && window.crypto.getRandomValues) {
       var arr = new Uint8Array(8);
@@ -1768,10 +1767,14 @@ function showDeviceLockScreen() {
     if (typeof window.Android !== "undefined" && typeof window.Android.getDeviceToken === "function") {
       try {
         token = window.Android.getDeviceToken() || "PLK-UNKNOWN";
-    } else if (typeof PalakIOSHardwareBridge !== "undefined") {
-      token = PalakIOSHardwareBridge.getDeviceToken();
       } catch (e) {
         console.error("Failed to get device token:", e);
+      }
+    } else if (typeof PalakIOSHardwareBridge !== "undefined") {
+      try {
+        token = PalakIOSHardwareBridge.getDeviceToken();
+      } catch (e) {
+        console.error("Failed to get iOS device token:", e);
       }
     }
     tokenEl.textContent = token;
@@ -2232,7 +2235,7 @@ function normPhone(v) {
 }
 
 function clientKey(company, city) { return `${normStr(company)}|${normStr(city)}`; }
-function parseWastageCell(cell) { try { const parsed = JSON.parse(String(cell || "{}")); if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) return parsed; } catch {} return {}; }
+function parseWastageCell(cell) { try { const parsed = JSON.parse(String(cell || "{}")); if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) return parsed; } catch (e) {} return {}; }
 
 const HEADER_FIELD_MAP = {
   "ID": "id", "CLIENT ID": "id", "CLIENT_ID": "id",
@@ -2555,27 +2558,7 @@ function printStickers(ids, start) {
     .to { font-size: 10px; font-weight: bold; color: #444; margin-bottom: 1px; }
     .company { font-size: 13px; font-weight: bold; line-height: 1.15; text-transform: uppercase; margin-bottom: 2px; color: #000; max-height: 16mm; overflow: hidden; word-break: break-word; }
     .details { font-size: 11px; font-weight: 600; line-height: 1.2; text-transform: uppercase; color: #111; max-height: 25mm; overflow: hidden; word-break: break-word; }
-  </style></head><body>${body}
-<script>
-  /* PWA Service Worker Registration & Persistent Storage */
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function() {
-      navigator.serviceWorker.register("./sw.js").then(function(reg) {
-        console.log("[PWA] Service Worker registered with scope:", reg.scope);
-      }).catch(function(err) {
-        console.warn("[PWA] Service Worker registration failed:", err);
-      });
-    });
-  }
-
-  if (navigator.storage && navigator.storage.persist) {
-    navigator.storage.persist().then(function(persistent) {
-      console.log("[PWA] Storage persistence granted:", persistent);
-    });
-  }
-</script>
-
-</body></html>`;
+  </style></head><body>${body}</body></html>`;
 
   openPrintWindow(html, "Could not open sticker sheet.");
 }
@@ -3279,5 +3262,25 @@ function wireLogo(imageId, wordmarkId) {
   enterApp().catch(() => { $("loginUser").focus(); });
 })();
 </script>
+
+<script>
+  /* PWA Service Worker Registration & Persistent Storage */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+      navigator.serviceWorker.register("./sw.js").then(function(reg) {
+        console.log("[PWA] Service Worker registered with scope:", reg.scope);
+      }).catch(function(err) {
+        console.warn("[PWA] Service Worker registration failed:", err);
+      });
+    });
+  }
+
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().then(function(persistent) {
+      console.log("[PWA] Storage persistence granted:", persistent);
+    });
+  }
+</script>
+
 </body>
 </html>
