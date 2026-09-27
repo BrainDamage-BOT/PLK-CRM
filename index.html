@@ -1,0 +1,3283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Android App Tags -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <!-- PWA & Apple Standalone Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Palak CRM">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <meta name="theme-color" content="#0b0d11">
+
+<meta name="theme-color" content="#14161d">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Palak Jewellers - PLK 1.0</title>
+<link rel="icon" type="image/x-icon" href="app_icon.ico">
+<style>
+  :root {
+    --bg: #090d16;
+    --panel: #151c2e;
+    --panel-2: #1e2840;
+    --sunken: #0f1624;
+    --line: #222f46;
+    --ink: #f8fafc;
+    --muted: #94a3b8;
+    --sidebar: #0f172a;
+    --gold: #f59e0b;
+    --gold-dark: #d97706;
+    --orange: #f97316;
+    --blue: #38bdf8;
+    --red: #ef4444;
+    --red-dark: #dc2626;
+    --green: #10b981;
+    --green-dark: #059669;
+    --purple: #a855f7;
+    --teal: #14b8a6;
+    --forest: #059669;
+    --field: #192339;
+    --field-ro: #111827;
+    --grid-bg: #0e1526;
+    --shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  [data-theme="light"] {
+    --bg: #f0f2f5;
+    --panel: #ffffff;
+    --panel-2: #f8fafc;
+    --sunken: #e2e8f0;
+    --line: #e2e8f0;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --sidebar: #1e293b;
+    --field: #f8fafc;
+    --field-ro: #f1f5f9;
+    --grid-bg: #ffffff;
+    --shadow: 0 12px 30px -4px rgba(15, 23, 42, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  button, input, select, textarea { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+
+  input, select, textarea {
+    background: var(--field);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    width: 100%;
+    outline: none;
+    font-weight: 500;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--blue) !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+  }
+  input[readonly] { background: var(--field-ro); color: var(--muted); }
+
+  .btn {
+    border: 0;
+    border-radius: 10px;
+    background: var(--gold);
+    color: #000;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 10px 16px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .btn:hover { filter: brightness(1.08); box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+  .btn:active { transform: scale(0.97); filter: brightness(.94); }
+  .btn.red { background: var(--red); color: #fff; }
+  .btn.green { background: var(--green); color: #fff; }
+  .btn.blue { background: var(--blue); color: #000; }
+  .btn.purple { background: var(--purple); color: #fff; }
+  .btn.teal { background: var(--teal); color: #fff; }
+  .btn.forest { background: var(--forest); color: #fff; }
+  .btn.brown { background: #784212; color: #fff; }
+  .btn.orange { background: var(--orange); color: #fff; }
+  .btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+
+  /* ---------------------------------------------------------- login */
+  .login {
+    height: 100%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 26px;
+    background: radial-gradient(1200px 600px at 50% 0%, #1e293b 0%, #090d16 100%);
+    padding: 24px;
+  }
+  .login h1 {
+    margin: 0;
+    font-size: clamp(22px, 3.4vw, 36px);
+    font-weight: 800;
+    letter-spacing: .5px;
+    text-align: center;
+    color: #fff;
+  }
+  .login-box {
+    width: min(400px, 92vw);
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 28px 26px 32px;
+    display: grid;
+    gap: 16px;
+    box-shadow: var(--shadow);
+  }
+  .login-box h2 {
+    margin: 0 0 6px;
+    text-align: center;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: #fff;
+    font-weight: 700;
+  }
+  .login-box input { height: 46px; background: #0f172a; border-color: #334155; color: #fff; border-radius: 10px; }
+  .login-box input::placeholder { color: #64748b; }
+  .login-box .btn { height: 46px; border-radius: 10px; }
+
+  /* ---------------------------------------------------------- shell */
+  #shell { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  #sidebar {
+    width: 272px;
+    flex: 0 0 272px;
+    background: var(--sidebar);
+    display: flex;
+    flex-direction: column;
+    padding: 22px 16px 16px;
+    gap: 9px;
+    color: #fff;
+    border-right: 1px solid var(--line);
+  }
+  #sidebar.hidden { display: none; }
+  #sideLogo {
+    display: block;
+    width: 100%;
+    max-width: 230px;
+    margin: 0 auto 10px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  #homeLogo { width: min(520px, 80%); height: auto; margin-bottom: 4px; }
+  #loginLogo {
+    width: min(420px, 76vw);
+    height: auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 20px;
+    box-shadow: var(--shadow);
+  }
+  .brand { text-align: center; margin-bottom: 14px; }
+  .brand strong { display: block; font-size: 20px; letter-spacing: .5px; line-height: 1.25; }
+  .brand span { display: block; font-size: 12px; color: #94a3b8; margin-top: 4px; letter-spacing: 2px; }
+  #sidebar .btn { width: 100%; text-align: left; padding: 12px 14px; border-radius: 10px; }
+  .side-foot { margin-top: auto; display: grid; gap: 8px; justify-items: center; padding-top: 16px; }
+  .side-foot label { font-size: 11px; letter-spacing: .14em; color: #94a3b8; font-weight: 700; }
+  .side-foot select { background: #1e293b; border-color: #334155; color: #fff; width: 170px; border-radius: 8px; }
+  #clock { font-size: 14px; font-weight: 700; color: #f8fafc; }
+
+  #main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; overflow: hidden; padding: 14px; position: relative; height: 100%; }
+  .screen { flex: 1 1 auto; min-height: 0; display: none; flex-direction: column; height: 100%; overflow: hidden; }
+  .screen.active { display: flex; }
+
+  .topbar { display: flex; align-items: center; gap: 16px; padding: 0 4px 12px; flex: 0 0 auto; }
+  .topbar h2 { margin: 0; font-size: 22px; letter-spacing: .4px; font-weight: 800; }
+  .topbar .spacer { margin-left: auto; }
+  .topbar .stamp { font-weight: 700; color: var(--muted); font-size: 13px; }
+
+  /* ---------------------------------------------------------- home */
+  #screenHome { align-items: center; justify-content: center; text-align: center; gap: 18px; overflow: auto; }
+  #screenHome h1 { margin: 0; color: var(--gold); font-size: clamp(24px, 4vw, 42px); font-weight: 800; }
+  #screenHome .about { color: var(--ink); font-size: clamp(14px, 1.5vw, 20px); line-height: 1.9; white-space: pre-line; max-width: 900px; }
+
+  /* ---------------------------------------------------------- dashboard */
+  .toolbar { display: flex; gap: 10px; padding: 0 4px 12px; flex: 0 0 auto; }
+  .toolbar input { height: 44px; border-radius: 12px; }
+  .table-wrap {
+    flex: 1 1 auto;
+    min-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    touch-action: pan-y;
+    outline: none;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    -webkit-overflow-scrolling: touch;
+  }
+  table.grid {
+    width: 100%;
+    table-layout: fixed;
+    min-width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--line);
+  }
+  table.grid col.c-tick { width: 44px; }
+  table.grid col.c-company { width: 62%; }
+  table.grid col.c-city { width: 38%; }
+  table.grid th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #1e293b;
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-align: left;
+    padding: 11px 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid var(--line);
+    border-bottom: 2px solid var(--line);
+  }
+  [data-theme="light"] table.grid th { background: #334155; color: #ffffff; }
+  table.grid td {
+    padding: 10px 8px;
+    height: auto;
+    border-bottom: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+    font-size: 12px;
+  }
+  table.grid td:last-child, table.grid th:last-child { border-right: none; }
+  table.grid tr.evenrow td { background: var(--panel-2); }
+  table.grid tr.oddrow td { background: var(--panel); }
+  [data-theme="light"] table.grid tr.evenrow td { background: #f8fafc; }
+  [data-theme="light"] table.grid tr.oddrow td { background: #ffffff; }
+  table.grid tr.sel td { background: rgba(245, 158, 11, 0.25) !important; color: var(--gold) !important; font-weight: 700; }
+  table.grid td.tick { text-align: center; cursor: pointer; user-select: none; font-size: 16px; color: var(--gold); }
+  table.grid tbody tr { height: 42px; transition: background 0.1s ease; }
+  table.grid tbody tr.spacer { height: auto; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 12px 4px 2px; flex: 0 0 auto; }
+  .client-counter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    height: 38px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0d2818;
+    background: linear-gradient(135deg, #d8f3dc, #b7e4c7);
+    border: 1.5px solid #52b788;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(45, 106, 79, 0.15);
+    user-select: none;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    flex: 0 0 auto;
+  }
+
+  /* ---------------------------------------------------------- forms */
+  .scroll { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 4px; }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 22px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .field { display: grid; grid-template-columns: 190px 1fr; align-items: center; gap: 12px; }
+  .field > label { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-align: right; color: var(--muted); }
+  .field input { height: 42px; font-weight: 600; border-radius: 10px; }
+  .req > label { color: var(--orange); }
+
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-top: 14px; }
+  .panel h3 { margin: 0 0 12px; font-size: 13px; letter-spacing: .1em; color: var(--muted); }
+  .photo-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .photo-card { width: 104px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 6px; display: grid; gap: 6px; }
+  .photo-card img { width: 90px; height: 90px; object-fit: cover; border-radius: 5px; cursor: zoom-in; display: block; margin: 0 auto; }
+  .photo-card .name { font-size: 10px; color: var(--muted); text-align: center; height: 90px; display: grid; place-content: center; overflow: hidden; cursor: zoom-in; }
+  .photo-card button { border: 0; background: var(--red); color: #fff; border-radius: 5px; padding: 4px; cursor: pointer; font-weight: 700; }
+
+  .spinner {
+    display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: var(--gold); animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .wastage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px 18px; }
+  .wastage-cell { display: grid; grid-template-columns: 1fr 92px; align-items: center; gap: 10px; }
+  .wastage-cell label { font-size: 12px; font-weight: 700; text-align: right; color: var(--muted); }
+  .wastage-cell input { height: 36px; text-align: center; font-weight: 700; }
+
+  /* ---------------------------------------------------------- accounts */
+  .accounts { display: grid; grid-template-columns: 1fr 320px; gap: 14px; flex: 1 1 auto; min-height: 0; }
+  .editor { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 12px; align-content: start; }
+  .editor h3 { margin: 0 0 4px; text-align: center; font-size: 16px; }
+  .editor input, .editor select { height: 44px; }
+
+  /* ---------------------------------------------------------- voucher */
+  #screenVoucher { gap: 8px; }
+  .voucher-top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 0 4px 4px; flex: 0 0 auto; }
+  .voucher-top .lbl { font-size: 13px; font-weight: 700; color: var(--muted); }
+  .voucher-top input { height: 38px; }
+  .vtable-wrap {
+    flex: 1 1 auto;
+    min-height: 250px;
+    overflow: auto;
+    background: var(--grid-bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  table.vtable { border-collapse: separate; border-spacing: 2px; width: 100%; }
+  table.vtable th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--blue);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 4px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  table.vtable td { padding: 0; }
+  table.vtable td.sr { color: var(--ink); font-weight: 700; text-align: center; width: 38px; font-size: 12px; }
+  table.vtable input {
+    height: 30px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background: var(--field);
+    font-size: 12px;
+    text-align: right;
+  }
+  table.vtable input.text-cell { text-align: left; }
+  table.vtable input:focus { border-color: var(--blue); box-shadow: none; }
+  .wcell { display: flex; align-items: center; gap: 3px; }
+  .wcell input { flex: 1 1 auto; min-width: 0; }
+  .wcell .dot { font-size: 15px; font-weight: 700; color: var(--red); width: 12px; text-align: center; }
+  .wcell .dot.saved { color: var(--green); }
+  table.vtable tfoot td {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background: #3a3a3a;
+    padding: 4px 0;
+  }
+  [data-theme="light"] table.vtable tfoot td { background: #dfe3ea; }
+  table.vtable tfoot td.sr { font-size: 12px; font-weight: 700; color: var(--ink); text-align: center; }
+  table.vtable tfoot input { height: 30px; font-size: 12px; font-weight: 700; text-align: right; }
+  .vfooter { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 10px; flex: 0 0 auto; }
+  .vfooter .line1 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+  .vfooter .line1 input { height: 36px; font-weight: 700; }
+  .vtotals { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px; }
+  .vtotals .cell { display: flex; align-items: center; gap: 8px; }
+  .vtotals .cell span { font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .vtotals .cell input { width: 132px; height: 36px; text-align: right; font-weight: 700; }
+  .vtotals .cell.big { margin-left: auto; }
+  .vtotals .cell.big span, .vtotals .cell.big input { color: var(--orange); font-size: 14px; }
+  .vtotals .cell.big input { width: 150px; }
+
+  /* ---------------------------------------------------------- dropdown */
+  #dropdown {
+    position: fixed;
+    z-index: 60;
+    min-width: 260px;
+    max-height: 190px;
+    overflow: auto;
+    background: #2b2b2b;
+    border: 1px solid #4472c4;
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    padding: 3px;
+  }
+  #dropdown div { padding: 6px 9px; border-radius: 4px; color: #fff; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  #dropdown div.on { background: var(--blue); }
+
+  /* ---------------------------------------------------------- modal */
+  .veil {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: rgba(5,7,12,.62);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+  }
+  .modal {
+    width: min(440px, 96vw);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    display: grid;
+    gap: 14px;
+  }
+  .modal h3 { margin: 0; font-size: 15px; letter-spacing: .08em; color: var(--orange); }
+  .modal p { margin: 0; white-space: pre-line; line-height: 1.55; }
+  .modal .row { display: flex; justify-content: flex-end; gap: 9px; }
+  .modal .row .btn { min-width: 92px; }
+  .modal label { font-size: 12px; font-weight: 700; color: var(--muted); }
+  .viewer { width: min(950px, 96vw); }
+  .viewer img { width: 100%; max-height: 68vh; object-fit: contain; background: #202020; border-radius: 8px; }
+  .viewer .bar { display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .viewer .count { font-weight: 700; min-width: 74px; text-align: center; }
+  .slots { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+
+  /* ========================================================== */
+  /* ANDROID MOBILE OVERRIDES                                   */
+  /* ========================================================== */
+  @media (max-width: 850px) {
+    /* Side Drawer Navigation */
+    #sidebar {
+      position: fixed;
+      left: -280px;
+      top: 0;
+      bottom: 0;
+      width: 272px;
+      z-index: 200;
+      transition: left 0.3s ease;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+    #sidebar.active { left: 0; }
+
+    /* Show all sidebar contents in drawer */
+    .brand, .side-foot { display: flex !important; flex-direction: column; }
+    #sidebar .btn {
+      width: 100%;
+      text-align: left;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    #sidebar .btn br { display: none; }
+
+    .side-sig { margin: 15px auto; font-size: 11px; color: #aaa; text-align: center; font-weight: 600; letter-spacing: 0.5px; }
+
+    /* Main Content Area */
+    #main {
+      padding: 60px 10px 10px;
+    }
+
+    /* Menu Toggle Button */
+    #menuBtn {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      width: 44px;
+      height: 44px;
+      z-index: 150;
+      background: var(--gold);
+      color: #1a1a1a;
+      border: 0;
+      border-radius: 8px;
+      font-size: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Overlay Veil */
+    #sidebarVeil {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 190;
+    }
+    #sidebarVeil.active { display: block; }
+    
+    /* Login Fixes */
+    .login-box { padding: 20px 16px; }
+    .login h1 { font-size: 22px; }
+
+    #screenScanner .panel { border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+    .scan-btn-grid { display: flex; gap: 10px; margin-top: 15px; width: 100%; }
+    .scan-btn-grid .btn { flex: 1; padding: 14px 5px; font-size: 13px; font-weight: 700; height: 55px; white-space: normal; line-height: 1.2; text-align: center; }
+    .table-wrap, .vtable-wrap {
+      border-radius: 6px;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 10px;
+    }
+    #screenDashboard.active {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
+    #screenVoucher.active {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      min-height: 100%;
+      overflow-y: auto !important;
+      padding-bottom: 120px;
+    }
+    .table-wrap { flex: 1 1 auto; min-height: 0; height: auto; }
+    .vtable-wrap { flex: 0 0 auto; height: 350px; min-height: 300px; }
+    table.grid th, table.grid td { padding: 12px 10px; font-size: 13px; }
+    table.vtable { min-width: 1000px; }
+
+    .vfooter { margin-top: 10px; flex: 0 0 auto; }
+    .actions { margin-top: 10px; flex: 0 0 auto; }
+
+    /* Action Buttons scroll */
+    .actions {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 8px;
+    }
+    .actions .btn { flex: 0 0 auto; padding: 14px 16px; } /* Larger touch targets */
+    .actions .client-counter-badge { flex: 0 0 auto; height: 48px; padding: 0 16px; font-size: 13px; }
+
+    /* Voucher Form Stacking */
+    .voucher-top { flex-direction: column; align-items: stretch; gap: 8px; }
+    .voucher-top input { width: 100% !important; }
+    .vfooter .line1, .vtotals { flex-direction: column; align-items: stretch; gap: 10px; }
+    .vtotals .cell { justify-content: space-between; }
+    .vtotals .cell.big { margin-left: 0; }
+    
+    /* Accounts Stacking */
+    .accounts { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: minmax(0, 1fr); }
+    .field { grid-template-columns: 120px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ DEVICE LOCK -->
+<section class="login" id="deviceLockScreen" style="display:none; z-index:99999;">
+  <img id="lockLogo" src="logo.png" alt="Palak Jewellers Pvt. Ltd." style="max-width:180px; margin-bottom:8px;" onerror="this.style.display='none'">
+  <h1 style="color:var(--gold); font-size:20px; letter-spacing:1.5px; margin:0 0 14px; text-align:center; font-weight:800;">PALAK JEWELLERS PVT LTD</h1>
+  <div class="login-box" style="text-align:center; max-width:420px; width:min(420px, 92vw);">
+    <div style="font-size:32px; margin-bottom:4px;">🔒</div>
+    <h2 style="color:var(--red, #e74c3c); font-size:17px; margin:0 0 8px; letter-spacing:1px; font-weight:800;">DEVICE NOT ACTIVATED</h2>
+    <p style="font-size:12px; color:var(--muted); margin:0 0 14px; line-height:1.4;">
+      This device requires authorization to access Palak Jewellers CRM. Send the Device Token below to your administrator to receive an activation key.
+    </p>
+
+    <!-- Device Token Box -->
+    <div style="background:var(--sunken); border:1px dashed var(--gold); border-radius:10px; padding:12px 10px; margin-bottom:12px;">
+      <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; font-weight:700;">Your Device Token</div>
+      <div id="lockDeviceToken" style="font-family:monospace; font-size:20px; font-weight:800; color:var(--gold); letter-spacing:2px;">
+        PLK-XXXX-YYYY
+      </div>
+    </div>
+
+    <!-- 1-Tap Copy Button -->
+    <button class="btn ghost" type="button" id="btnCopyDeviceToken" style="width:100%; margin-bottom:14px; border-color:var(--gold); color:var(--gold); display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700;">
+      📋 COPY DEVICE ID
+    </button>
+
+    <!-- Key Input -->
+    <div style="text-align:left; margin-bottom:12px;">
+      <label style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; display:block; margin-bottom:6px;">
+        16-Character Activation Key
+      </label>
+      <input id="activationKeyInput" type="text" placeholder="PJ-XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" style="width:100%; text-align:center; font-family:monospace; font-size:16px; letter-spacing:2px; text-transform:uppercase;">
+    </div>
+
+    <!-- Activate Button -->
+    <button class="btn" type="button" id="btnActivateDevice" style="width:100%; background:var(--gold); color:#000; font-weight:800; font-size:15px; border-radius:10px;">
+      ACTIVATE DEVICE
+    </button>
+
+    <!-- Live Feedback Area -->
+    <div id="activationFeedback" style="margin-top:10px; font-size:12px; font-weight:600; min-height:20px; line-height:1.3;"></div>
+  </div>
+</section>
+
+<!-- ============================================================ LOGIN -->
+<section class="login" id="loginScreen">
+  <img id="loginLogo" src="logo.png" alt="Palak Jewellers Pvt. Ltd." hidden>
+  <h1 id="loginWordmark">PALAK JEWELLERS PVT LTD, MUMBAI</h1>
+  <form class="login-box" id="loginForm" autocomplete="off">
+    <h2>SYSTEM LOGIN</h2>
+    <input id="loginUser" placeholder="Username" autocomplete="off">
+    <input id="loginPass" type="password" placeholder="Password" autocomplete="off">
+    <button class="btn" type="submit">LOGIN</button>
+    <button class="btn ghost" type="button" id="bioBtn" style="margin-top:10px; display:none;">&#129522; BIOMETRIC LOGIN</button>
+  </form>
+</section>
+
+<!-- ============================================================ SHELL -->
+<div id="shell" hidden>
+  <button id="menuBtn">&#9776;</button>
+  <div id="sidebarVeil"></div>
+  <!-- Sidebar becomes Side Drawer on Mobile -->
+  <aside id="sidebar">
+    <div class="brand">
+      <img id="sideLogo" src="logo.png" alt="Logo" style="display:block !important; visibility:visible !important;">
+      <strong id="sideWordmark">PALAK JEWELLERS<br>MUMBAI</strong>
+      <span>PLK 1.0</span>
+    </div>
+    <button class="btn" data-go="home">&#127968;<br>HOME</button>
+    <button class="btn" data-go="dashboard">&#128202;<br>DASHBOARD</button>
+    <button class="btn" data-go="newclient">&#10133;<br>ADD CLIENT</button>
+    <button class="btn" data-go="accounts" data-admin>&#9881;&#65039;<br>ACCOUNTS</button>
+    <button class="btn" data-go="voucher" data-admin>&#129534;<br>VOUCHER</button>
+    <button class="btn" data-go="scanner">&#128247;<br>SCANNER</button>
+    <button class="btn red" data-go="logout">&#128682;<br>LOGOUT</button>
+    <div class="side-sig">Created by - SapremSethiyaLiving**</div>
+    <div class="side-foot">
+      <label for="themePick">THEME</label>
+      <select id="themePick">
+        <option>Dark</option>
+        <option>Light</option>
+      </select>
+      <div id="clock"></div>
+    </div>
+  </aside>
+
+  <main id="main">
+
+    <!-- ---------------------------------------------------- home -->
+    <section class="screen" id="screenHome">
+      <img id="homeLogo" src="logo.png" alt="Logo" style="display:block !important; visibility:visible !important; max-width: 250px;">
+      <h1>PALAK JEWELLERS PVT LTD, MUMBAI</h1>
+      <div class="about">99/103 , 2 Nd Floor , JEWEL CROWN , Tambakanta, Pydhonie, Mumbai, Maharashtra 400003
+
+LANDLINE - 022 23423433 / 022 23423434
+
+info@palakjewellers.com
+sales@palakjewellers.com
+
+We at Palak Jewellers Pvt Ltd promise to deliver the exclusive and light weighed jewellery
+with mesmerising feeling of PURITY &amp; SERVICE ranging from 18ct to 22ct.
+All stock 100% HUID ready to be served for our customers.
+We are live 24*7. Select from over 10000 designs. Just a click away.</div>
+    </section>
+
+    <!-- ---------------------------------------------------- dashboard -->
+    <section class="screen" id="screenDashboard">
+      <div class="toolbar">
+        <input id="search" placeholder="Search by Company / City / Phone" autocomplete="off">
+        <button class="btn ghost" id="checkAll">&#9745; ALL</button>
+        <button class="btn ghost" id="checkNone">&#9744; NONE</button>
+      </div>
+      <div class="table-wrap" id="tableWrap" tabindex="-1">
+        <table class="grid" id="clientTable">
+          <colgroup>
+            <col class="c-tick"><col class="c-company"><col class="c-city">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="c-tick">&#10004;</th>
+              <th>COMPANY NAME</th>
+              <th>CITY</th>
+            </tr>
+          </thead>
+          <tbody id="clientRows"></tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button class="btn blue" id="btnEdit">&#9998; EDIT</button>
+        <button class="btn red" id="btnDelete">&#128465; DELETE</button>
+        <button class="btn purple" id="btnStickers">&#128424; STICKERS</button>
+        <button class="btn forest" id="btnExport" data-admin>&#128202; EXPORT EXCEL</button>
+        <button class="btn teal" id="btnImport" data-admin>&#128229; IMPORT EXCEL</button>
+        <button class="btn brown" id="btnBackup" data-admin>&#128190; BACKUP</button>
+        <div class="client-counter-badge" id="clientCounter" title="Total Client Entries">Total Clients: 0</div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- client form -->
+    <section class="screen" id="screenClient">
+      <div class="topbar">
+        <button class="btn red" id="clientBack">&#11013; BACK</button>
+        <h2 id="clientTitle">CLIENT DETAILS</h2>
+        <span class="spacer"></span>
+        <span class="stamp" id="clientClock"></span>
+      </div>
+
+      <div class="scroll" id="clientFields">
+        <div class="form-grid" id="fieldGrid"></div>
+        <div class="panel">
+          <h3>&#128247; CLIENT DOCUMENTS (MAX 5, 5 MB EACH)</h3>
+          <button class="btn" id="addPhoto">&#10133; ADD PHOTO</button>
+          <input type="file" id="photoInput" accept=".jpg,.jpeg,.png" hidden>
+          <div class="photo-row" id="photoRow" style="margin-top:12px"></div>
+        </div>
+      </div>
+
+      <div class="scroll" id="clientWastage" hidden>
+        <div class="panel">
+          <h3>WASTAGE PERCENTAGE PER CATEGORY</h3>
+          <div class="wastage-grid" id="wastageGrid"></div>
+        </div>
+      </div>
+
+      <div class="actions" id="clientActions">
+        <button class="btn orange" id="openWastage">&#128142; MANAGE WASTAGE</button>
+        <button class="btn" id="saveClient">&#128190; SAVE CLIENT</button>
+      </div>
+
+      <div class="actions" id="wastageActions" hidden>
+        <input id="newCategory" placeholder="New" style="width:70px; height:45px; flex: 0 0 70px;">
+        <button class="btn" id="addCategory" style="flex:1; height:45px;">&#10133; ADD</button>
+        <select id="delCategory" data-admin style="width:70px; height:45px; flex: 0 0 70px;"></select>
+        <button class="btn red" id="deleteCategory" data-admin style="flex:1; height:45px;">&#128465; DELETE</button>
+        <button class="btn green" id="closeWastage" style="flex:1; height:45px;">&#10004; DONE</button>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- accounts -->
+    <section class="screen" id="screenAccounts">
+      <div class="topbar">
+        <button class="btn red" data-go="dashboard">&#11013; BACK</button>
+        <h2>MANAGE ACCOUNTS</h2>
+      </div>
+      <div class="accounts">
+        <div class="table-wrap">
+          <table class="grid" id="userTable">
+            <colgroup>
+              <col class="c-id"><col class="c-user"><col class="c-user"><col class="c-user"><col class="c-user">
+            </colgroup>
+            <thead>
+              <tr><th>ID</th><th>USERNAME</th><th>PASSWORD</th><th>ROLE</th><th>STATUS</th></tr>
+            </thead>
+            <tbody id="userRows"></tbody>
+          </table>
+        </div>
+        <div class="editor">
+          <h3>ACCOUNT EDITOR</h3>
+          <input id="accUser" placeholder="Username" autocomplete="off">
+          <input id="accPass" placeholder="Password" autocomplete="off">
+          <select id="accRole">
+            <option value="superadmin">superadmin</option>
+            <option value="staff">staff</option>
+          </select>
+          <button class="btn green" id="accSave">&#128190; SAVE / UPDATE USER</button>
+          <button class="btn ghost" id="accClear">&#10133; CLEAR FORM</button>
+          <button class="btn red" id="accDelete">&#128465; DELETE USER</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- scanner -->
+    <section class="screen" id="screenScanner">
+      <div class="topbar">
+        <button class="btn red" data-go="home">&#11013; BACK</button>
+        <h2>CONTACT SCANNER</h2>
+        <span class="spacer"></span>
+        <span class="stamp">PJ SCAN v1.1</span>
+      </div>
+
+      <div class="scroll">
+        <div class="panel" style="text-align:center;">
+          <h3 style="color:var(--gold); margin-bottom:10px;">PHOTO CAPTURE</h3>
+
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div id="thumbFront" style="width:50px; height:50px; background:var(--panel-2); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; color:var(--muted); border:1px solid var(--line); overflow:hidden;">1</div>
+                <button class="btn" id="btnTakeFront" onclick="triggerScanCamera('front')" style="flex:1;">1. FRONT PHOTO</button>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div id="thumbBack" style="width:50px; height:50px; background:var(--panel-2); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; color:var(--muted); border:1px solid var(--line); overflow:hidden;">2</div>
+                <button class="btn" id="btnTakeBack" onclick="triggerScanCamera('back')" style="flex:1; opacity:0.5;" disabled>2. BACK PHOTO</button>
+            </div>
+
+            <button class="btn orange" id="btnExtractOnlyFront" onclick="startScanExtraction(true)" style="display:none; width:100%;">3. EXTRACT 1-SIDED NOW</button>
+          </div>
+
+          <div id="scanPreview" style="display: flex; gap: 8px; overflow-x: auto; margin-top: 15px; justify-content: center;"></div>
+          <div id="scanStatus" style="font-size: 0.9rem; text-align: center; margin: 15px 0; color: var(--orange); font-weight: 600;">Ready to scan.</div>
+        </div>
+
+        <div class="panel" id="scanForm" style="margin-top:20px;">
+          <h3 style="color:var(--gold);">VERIFIED DATA</h3>
+
+          <div id="scanNames" style="display:grid; gap:8px; margin-bottom:12px;">
+            <label style="font-size: 11px; color: var(--muted); font-weight: 700;">NAME(S)</label>
+            <input type="text" class="sc_name" placeholder="Name">
+          </div>
+
+          <div style="display:grid; gap:8px; margin-bottom:12px;">
+            <label style="font-size: 11px; color: var(--muted); font-weight: 700;">COMPANY</label>
+            <input type="text" id="sc_company" placeholder="Company Name">
+          </div>
+
+          <div id="scanPhones" style="display:grid; gap:8px; margin-bottom:12px;">
+            <label style="font-size: 11px; color: var(--muted); font-weight: 700;">MOBILE(S)</label>
+            <input type="tel" class="sc_phone" placeholder="+91...">
+          </div>
+
+          <div style="display:grid; gap:8px; margin-bottom:12px;">
+            <label style="font-size: 11px; color: var(--muted); font-weight: 700;">EMAIL</label>
+            <input type="email" id="sc_email" placeholder="Email">
+          </div>
+
+          <div style="display:grid; gap:8px; margin-bottom:12px;">
+            <label style="font-size: 11px; color: var(--muted); font-weight: 700;">ADDRESS</label>
+            <input type="text" id="sc_address" placeholder="Address">
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div>
+              <label style="font-size: 11px; color: var(--muted); font-weight: 700;">CITY</label>
+              <input type="text" id="sc_city" placeholder="City">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--muted); font-weight: 700;">STATE</label>
+              <input type="text" id="sc_state" placeholder="State">
+            </div>
+          </div>
+
+          <label style="font-size: 11px; color: var(--muted); font-weight: 700;">PINCODE</label>
+          <input type="text" id="sc_pin" placeholder="Pincode" style="max-width: 150px; margin-bottom:15px;">
+
+          <div class="scan-btn-grid">
+            <button class="btn blue" onclick="saveContactToNative()">SAVE CONTACT</button>
+            <button class="btn green" onclick="saveToAddressBook()">SAVE TO CRM</button>
+          </div>
+          <button class="btn ghost" onclick="resetScanForm()" style="width:100%; margin-top:10px;">CLEAR SCANNER</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- issue voucher -->
+    <section class="screen" id="screenVoucher">
+      <div class="topbar">
+        <button class="btn red" id="voucherBack">BACK</button>
+        <h2 style="color:var(--orange)">ISSUE VOUCHER</h2>
+        <span class="spacer"></span>
+        <span class="stamp">PALAK JEWELLERS PVT LTD</span>
+      </div>
+
+      <div class="voucher-top">
+        <span class="lbl">Client:</span>
+        <input id="vClient" style="width:330px" autocomplete="off">
+        <span class="lbl">Date:</span>
+        <input id="vDate" style="width:130px" autocomplete="off">
+        <span class="lbl">Voucher No:</span>
+        <input id="vNumber" style="width:140px;font-weight:700" readonly>
+      </div>
+
+      <div class="vtable-wrap">
+        <table class="vtable" id="vTable">
+          <thead><tr id="vHead"></tr></thead>
+          <tbody id="vBody"></tbody>
+          <tfoot><tr id="vTotals"></tr></tfoot>
+        </table>
+      </div>
+
+      <div class="vfooter">
+        <div class="line1">
+          <span class="lbl">Gold Rate:</span>
+          <input id="vGold" style="width:120px" autocomplete="off">
+          <span class="lbl">Wt.%:</span>
+          <input id="vWt" style="width:95px" autocomplete="off">
+          <span class="lbl">Narration:</span>
+          <input id="vNarration" maxlength="50" style="width:260px" autocomplete="off">
+        </div>
+        <div class="vtotals">
+          <div class="cell"><span>Stone Chrg/HM Amount:</span><input id="vStone" readonly value="0.00"></div>
+          <div class="cell"><span>Fine Amount:</span><input id="vFine" readonly value="0.00"></div>
+          <div class="cell"><span>GST Amount:</span><input id="vGst" readonly value="0.00"></div>
+          <div class="cell big"><span>NET BALANCE:</span><input id="vNet" readonly value="0.00"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn green" id="vPrint">PRINT VOUCHER</button>
+        <button class="btn" style="background:#E67E22;color:#fff" id="vClear">ALL</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="dropdown" hidden></div>
+<input type="file" id="importInput" accept=".xlsx" hidden>
+
+<script>
+"use strict";
+
+/* ============================================================ constants */
+const CLIENT_FIELDS = [
+  "company", "gst", "address", "city", "state", "pincode", "person", "phone",
+  "phone2", "phone3", "email", "managed", "logistics", "billing", "shipping",
+  "parcel_charges", "parcel_day", "delivery", "screw", "stone", "requirement",
+  "logo", "ratecut_unfix", "order_parcel_charge"
+];
+
+const FIELD_LAYOUT = [
+  ["company*", "gst"], ["address*", ""], ["city*", "state*"], ["pincode", "person"],
+  ["phone*", "phone2"], ["phone3", "email"], ["managed", "logistics"],
+  ["billing", "shipping"], ["parcel_charges", "parcel_day"], ["delivery", "screw"],
+  ["stone", "requirement"], ["logo", "ratecut_unfix"], ["order_parcel_charge", ""]
+];
+
+const MANDATORY = ["company", "address", "city", "state", "phone"];
+
+const AUTOCOMPLETE_FIELDS = [
+  "company", "city", "state", "managed", "logistics", "billing", "shipping",
+  "delivery", "requirement", "person", "parcel_charges", "parcel_day", "screw",
+  "stone", "logo", "ratecut_unfix", "order_parcel_charge"
+];
+
+const MAX_CLIENT_PHOTOS = 5;
+const MAX_PHOTO_SIZE_MB = 5;
+const ROW_COUNT = 15;
+const DEFAULT_GST = "3";
+
+const DEFAULT_WASTAGE_CATEGORIES = [
+  "BOMBAY 92", "BOMBAY 75", "SINDOOR 75", "BOMBAY SPECIAL", "CHANDAN",
+  "MEERUT SPECIAL", "BOMBAY LAPPA", "RAJKOT", "SINDOOR 92", "SINDOOR SPECIAL",
+  "LASER COLLECTION", "3D COLLECTION", "RAINBOW COLLECTION", "FANCY MALA",
+  "ANTIQUE", "LUXURY ANTIQUE", "TEMPLE", "MOTIMALA", "MANGALSUTRA",
+  "MICRO MANGALSUTRA", "ANTIQUE MANGALSUTRA", "CASTING", "CASTING G/N",
+  "ISHTAA", "NISHTAA", "GEMSTONE", "ILA", "HOLLOW", "HOLLOW G/N",
+  "HANDMADE", "TRICHUR", "EJI TEMPLE", "UNICRAFT", "MACHIN CHAINS"
+];
+
+const DEFAULT_VOUCHER_CODES = [
+  "BOMBAY 92", "BOMBAY 75", "SINDOOR 75", "BOMBAY SPECIAL", "CHANDAN",
+  "MEERUT SPECIAL", "BOMBAY LAPPA", "RAJKOT", "SINDOOR 92", "SINDOOR SPECIAL",
+  "LASER COLLECTION", "3D COLLECTION", "RAINBOW COLLECTION", "FANCY MALA",
+  "ANTIQUE", "LUXURY ANTIQUE", "TEMPLE", "MOTIMALA", "MANGALSUTRA",
+  "CASTING", "CASTING G/N", "ISHTAA", "NISHTAA", "GEMSTONE",
+  "ILA", "HOLLOW", "HOLLOW G/N", "HANDMADE", "TRICHUR",
+  "EJI TEMPLE", "UNICRAFT", "MACHIN CHAINS"
+];
+
+const VOUCHER_COLUMNS = [
+  { key: "code", label: "Code", width: 125 },
+  { key: "item", label: "Name", width: 130 },
+  { key: "pcs", label: "Pcs", width: 55 },
+  { key: "gross", label: "Gross Wt", width: 85 },
+  { key: "less", label: "Less Wt", width: 85 },
+  { key: "net", label: "Net Wt", width: 85, readonly: true },
+  { key: "melting", label: "Melting", width: 75 },
+  { key: "wastage", label: "Wastage", width: 80 },
+  { key: "fine", label: "Fine Wt", width: 85, readonly: true },
+  { key: "amount", label: "Stone Chrg/HM", width: 85 },
+  { key: "gst", label: "GST", width: 55 },
+  { key: "hall_gst", label: "Hall/Lab GST AMT", width: 115, readonly: true }
+];
+
+const TOTAL_COLUMNS = ["pcs", "gross", "less", "net", "fine", "amount", "hall_gst"];
+const RECALC_KEYS = ["pcs", "gross", "less", "melting", "wastage", "amount", "gst"];
+
+/* ============================================================ state */
+const S = { user: null, clients: [], wastageCategories: [], voucherClients: [], voucherCodes: [], clientCodeWastage: {}, nextVoucherNo: "PLK-00001", users: [] };
+const $ = id => document.getElementById(id);
+function esc(value) { return String(value == null ? "" : value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+
+/* ============================================================ math engine */
+function exactOfDouble(x) {
+  if (!Number.isFinite(x)) return { v: 0n, s: 0 };
+  const view = new DataView(new ArrayBuffer(8)); view.setFloat64(0, x);
+  const hi = view.getUint32(0), lo = view.getUint32(4);
+  const negative = (hi >>> 31) === 1, exponent = (hi >>> 20) & 0x7ff;
+  let mantissa = (BigInt(hi & 0xfffff) << 32n) | BigInt(lo), power;
+  if (exponent === 0) { power = -1074; } else { mantissa |= (1n << 52n); power = exponent - 1075; }
+  let result;
+  if (power >= 0) result = { v: mantissa << BigInt(power), s: 0 };
+  else result = { v: mantissa * (5n ** BigInt(-power)), s: -power };
+  if (negative) result.v = -result.v;
+  return result;
+}
+function decScale(d, scale) { return scale === d.s ? d : { v: d.v * (10n ** BigInt(scale - d.s)), s: scale }; }
+function decAdd(a, b) { const s = Math.max(a.s, b.s); return { v: decScale(a, s).v + decScale(b, s).v, s }; }
+function decMul(a, b) { return { v: a.v * b.v, s: a.s + b.s }; }
+function decDiv(a, b, precision) {
+  const digits = precision == null ? 34 : precision;
+  if (b.v === 0n) return { v: 0n, s: 0 };
+  let num = a.v * (10n ** BigInt(b.s + digits)), den = b.v * (10n ** BigInt(a.s));
+  if (den < 0n) { num = -num; den = -den; }
+  const negative = num < 0n; if (negative) num = -num;
+  let q = num / den; const twice = (num % den) * 2n;
+  if (twice > den || (twice === den && (q & 1n) === 1n)) q += 1n;
+  return { v: negative ? -q : q, s: digits };
+}
+function decRound(d, places, halfUp) {
+  if (d.s <= places) return decScale(d, places);
+  const den = 10n ** BigInt(d.s - places); let n = d.v;
+  const negative = n < 0n; if (negative) n = -n;
+  let q = n / den; const twice = (n % den) * 2n;
+  if (twice > den || (twice === den && (halfUp || (q & 1n) === 1n))) q += 1n;
+  return { v: negative ? -q : q, s: places };
+}
+function decToFixed(d, places, halfUp) {
+  const r = decRound(d, places, halfUp); const negative = r.v < 0n;
+  let digits = (negative ? -r.v : r.v).toString();
+  if (places <= 0) return (negative ? "-" : "") + digits;
+  digits = digits.padStart(places + 1, "0");
+  return (negative ? "-" : "") + digits.slice(0, -places) + "." + digits.slice(-places);
+}
+function decParse(value) {
+  const t = String(value == null ? "" : value).trim();
+  if (!t || !/^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(t)) return { v: 0n, s: 0 };
+  const negative = t[0] === "-";
+  const body = (t[0] === "+" || t[0] === "-") ? t.slice(1) : t;
+  const parts = body.split("."); const frac = parts[1] || "";
+  const v = BigInt((parts[0] || "0") + frac);
+  return { v: negative ? -v : v, s: frac.length };
+}
+function decIsZero(d) { return d.v === 0n; }
+function decEquals(a, b) { const s = Math.max(a.s, b.s); return decScale(a, s).v === decScale(b, s).v; }
+function pyFormat(x, places) { return decToFixed(exactOfDouble(x), places, false); }
+function pyFloat(value) {
+  const t = String(value == null ? "" : value).trim();
+  if (!t || !/^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/.test(t)) return 0;
+  const n = Number(t); return Number.isFinite(n) ? n : 0;
+}
+
+/* ============================================================ dialogs */
+function modal(build) {
+  return new Promise(resolve => {
+    const veil = document.createElement("div"); veil.className = "veil";
+    const box = document.createElement("div"); box.className = "modal"; veil.appendChild(box);
+    let done = false;
+    const close = value => { if (done) return; done = true; document.removeEventListener("keydown", onKey, true); veil.remove(); resolve(value); };
+    const onKey = event => { if (event.key === "Escape") { event.stopPropagation(); close(null); } };
+    document.addEventListener("keydown", onKey, true);
+    veil.addEventListener("mousedown", event => { if (event.target === veil) close(null); });
+    build(box, close); document.body.appendChild(veil);
+  });
+}
+function say(title, message) {
+  return modal((box, close) => {
+    box.innerHTML = `<h3>${esc(title)}</h3><p>${esc(message)}</p><div class="row"><button class="btn">OK</button></div>`;
+    const ok = box.querySelector("button"); ok.onclick = () => close(true); setTimeout(() => ok.focus(), 10);
+  });
+}
+function ask(title, message, okLabel) {
+  return modal((box, close) => {
+    box.innerHTML = `<h3>${esc(title)}</h3><p>${esc(message)}</p><div class="row"><button class="btn ghost" data-no>NO</button><button class="btn" data-yes>${esc(okLabel || "YES")}</button></div>`;
+    box.querySelector("[data-no]").onclick = () => close(false);
+    const yes = box.querySelector("[data-yes]"); yes.onclick = () => close(true); setTimeout(() => yes.focus(), 10);
+  });
+}
+
+/* ============================================================ single-machine database engine */
+const LOCAL_KEY = "palakCrmOffline";
+
+function sha256Hex(input) {
+  const K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+  const H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+  const bytes = Array.from(new TextEncoder().encode(input));
+  const bitLength = bytes.length * 8; bytes.push(0x80);
+  while (bytes.length % 64 !== 56) bytes.push(0);
+  for (let i = 7; i >= 0; i--) bytes.push((bitLength / Math.pow(2, i * 8)) & 0xff);
+  const rotr = (x, n) => (x >>> n) | (x << (32 - n));
+  const w = new Uint32Array(64);
+  for (let block = 0; block < bytes.length; block += 64) {
+    for (let i = 0; i < 16; i++) w[i] = (bytes[block + i * 4] << 24) | (bytes[block + i * 4 + 1] << 16) | (bytes[block + i * 4 + 2] << 8) | bytes[block + i * 4 + 3];
+    for (let i = 16; i < 64; i++) {
+      const s0 = rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+      const s1 = rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+    }
+    let [a, b, c, d, e, f, g, h] = H;
+    for (let i = 0; i < 64; i++) {
+      const S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25), ch = (e & f) ^ (~e & g), t1 = (h + S1 + ch + K[i] + w[i]) >>> 0;
+      const S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22), maj = (a & b) ^ (a & c) ^ (b & c), t2 = (S0 + maj) >>> 0;
+      h = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+    }
+    [a, b, c, d, e, f, g, h].forEach((v, i) => { H[i] = (H[i] + v) >>> 0; });
+  }
+  return H.map(v => v.toString(16).padStart(8, "0")).join("");
+}
+
+function localHash(password, salt) {
+  let digest = `${salt}:${password}`;
+  for (let i = 0; i < 1000; i++) digest = sha256Hex(digest);
+  return digest;
+}
+
+function localHashPassword(password) {
+  const salt = Math.random().toString(36).slice(2) + Date.now().toString(36);
+  return { salt, hash: localHash(String(password == null ? "" : password), salt) };
+}
+
+const LOCAL = { state: null };
+
+function localDefaults() {
+  return {
+    clients: { nextId: 1, items: [] },
+    users: { nextId: 2, items: [Object.assign({ id: 1, username: "Living", role: "superadmin", strikes: 0, active: 1 }, localHashPassword("Forever"))] },
+    settings: { wastage: DEFAULT_WASTAGE_CATEGORIES.slice(), voucherSeq: 0 },
+    voucherClients: { nextId: 1, items: [] },
+    voucherCodes: { items: DEFAULT_VOUCHER_CODES.slice() },
+    clientCodeWastage: { items: {} }
+  };
+}
+
+const DB_NAME = "PalakCrmDB";
+const DB_VERSION = 1;
+const DB_STORE = "crm_store";
+const DB_KEY = "palakCrmOffline";
+
+let _idbInstance = null;
+let _idbOpenPromise = null;
+
+function dbOpen() {
+  if (_idbInstance) return Promise.resolve(_idbInstance);
+  if (_idbOpenPromise) return _idbOpenPromise;
+
+  _idbOpenPromise = new Promise((resolve, reject) => {
+    if (typeof indexedDB === "undefined") {
+      _idbOpenPromise = null;
+      return reject(new Error("IndexedDB is not supported in this environment"));
+    }
+
+    let req;
+    try {
+      req = indexedDB.open(DB_NAME, DB_VERSION);
+    } catch (openErr) {
+      _idbOpenPromise = null;
+      return reject(openErr);
+    }
+
+    req.onupgradeneeded = event => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(DB_STORE)) {
+        db.createObjectStore(DB_STORE);
+      }
+    };
+
+    req.onsuccess = event => {
+      _idbInstance = event.target.result;
+
+      _idbInstance.onclose = () => {
+        _idbInstance = null;
+        _idbOpenPromise = null;
+      };
+
+      _idbInstance.onversionchange = () => {
+        try { _idbInstance.close(); } catch (_) {}
+        _idbInstance = null;
+        _idbOpenPromise = null;
+      };
+
+      resolve(_idbInstance);
+    };
+
+    req.onerror = event => {
+      _idbOpenPromise = null;
+      const err = req.error || (event && event.target && event.target.error) || new Error("Failed to open IndexedDB");
+      console.error("IndexedDB open error:", err);
+      reject(err);
+    };
+
+    req.onblocked = () => {
+      console.warn("IndexedDB open blocked by another connection.");
+    };
+  });
+
+  return _idbOpenPromise;
+}
+
+function formatDbError(err) {
+  if (!err) return "Database save failed.";
+  if (err.name === "QuotaExceededError") {
+    return "Storage quota exceeded. Please free up device disk space.";
+  }
+  return `Database error: ${err.message || err.name || "Failed to persist state"}`;
+}
+
+async function dbSave() {
+  if (!LOCAL.state) return "No state to save.";
+  try {
+    const db = await dbOpen();
+    return await new Promise(resolve => {
+      let settled = false;
+      const tx = db.transaction(DB_STORE, "readwrite");
+      const store = tx.objectStore(DB_STORE);
+
+      tx.oncomplete = () => {
+        if (!settled) {
+          settled = true;
+          resolve(null);
+        }
+      };
+
+      tx.onerror = event => {
+        if (!settled) {
+          settled = true;
+          const err = tx.error || (event && event.target && event.target.error);
+          console.error("IndexedDB transaction error in dbSave:", err);
+          resolve(formatDbError(err));
+        }
+      };
+
+      tx.onabort = event => {
+        if (!settled) {
+          settled = true;
+          const err = tx.error || (event && event.target && event.target.error);
+          console.error("IndexedDB transaction abort in dbSave:", err);
+          resolve(formatDbError(err));
+        }
+      };
+
+      const putReq = store.put(LOCAL.state, DB_KEY);
+      putReq.onerror = () => {
+        const err = putReq.error;
+        console.error("IndexedDB put error in dbSave:", err);
+      };
+    });
+  } catch (err) {
+    console.error("IndexedDB dbSave exception:", err);
+    return formatDbError(err);
+  }
+}
+
+async function dbLoad() {
+  if (LOCAL.state) return LOCAL.state;
+  try {
+    const db = await dbOpen();
+    const stored = await new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_STORE, "readonly");
+      const store = tx.objectStore(DB_STORE);
+      const req = store.get(DB_KEY);
+
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error("Failed to get state from store"));
+      tx.onerror = () => reject(tx.error || new Error("Transaction error during dbLoad"));
+    });
+
+    if (stored && stored.users) {
+      LOCAL.state = stored;
+    } else {
+      // First boot or empty IndexedDB: Check for legacy localStorage data
+      let legacy = null;
+      try {
+        const raw = localStorage.getItem(LOCAL_KEY);
+        legacy = raw ? JSON.parse(raw) : null;
+      } catch (parseErr) {
+        console.warn("Palak CRM: Failed to parse legacy localStorage state:", parseErr);
+        legacy = null;
+      }
+
+      if (legacy && legacy.users) {
+        LOCAL.state = legacy;
+        console.info("Palak CRM: Migrating legacy localStorage data to IndexedDB...");
+        const saveErr = await dbSave();
+        if (!saveErr) {
+          try {
+            localStorage.removeItem(LOCAL_KEY);
+            console.info("Palak CRM: Legacy data migrated and localStorage quota reclaimed.");
+          } catch (_) {}
+        } else {
+          console.error("Palak CRM: Migration dbSave failed; preserving localStorage copy:", saveErr);
+        }
+      } else {
+        LOCAL.state = localDefaults();
+        await dbSave();
+        console.info("Palak CRM: Initialized fresh IndexedDB storage.");
+      }
+    }
+  } catch (err) {
+    console.error("Palak CRM: IndexedDB dbLoad failed, falling back to legacy/defaults:", err);
+    let fallback = null;
+    try {
+      const raw = localStorage.getItem(LOCAL_KEY);
+      fallback = raw ? JSON.parse(raw) : null;
+    } catch (_) {}
+    LOCAL.state = fallback && fallback.users ? fallback : localDefaults();
+  }
+
+  // Schema hygiene & defensive reconciliation
+  if (!LOCAL.state.settings) {
+    LOCAL.state.settings = { wastage: DEFAULT_WASTAGE_CATEGORIES.slice(), voucherSeq: 0 };
+  }
+  if (!Array.isArray(LOCAL.state.settings.wastage)) {
+    LOCAL.state.settings.wastage = DEFAULT_WASTAGE_CATEGORIES.slice();
+  }
+  DEFAULT_WASTAGE_CATEGORIES.forEach(name => {
+    if (!LOCAL.state.settings.wastage.includes(name)) {
+      LOCAL.state.settings.wastage.push(name);
+    }
+  });
+  if (typeof LOCAL.state.settings.voucherSeq !== "number") {
+    LOCAL.state.settings.voucherSeq = 0;
+  }
+  if (!LOCAL.state.clients) {
+    LOCAL.state.clients = { nextId: 1, items: [] };
+  } else {
+    if (typeof LOCAL.state.clients.nextId !== "number") {
+      LOCAL.state.clients.nextId = (LOCAL.state.clients.items?.length || 0) + 1;
+    }
+    if (!Array.isArray(LOCAL.state.clients.items)) {
+      LOCAL.state.clients.items = [];
+    }
+  }
+  if (!LOCAL.state.users || !Array.isArray(LOCAL.state.users.items) || LOCAL.state.users.items.length === 0) {
+    LOCAL.state.users = {
+      nextId: 2,
+      items: [Object.assign({ id: 1, username: "Living", role: "superadmin", strikes: 0, active: 1 }, localHashPassword("Forever"))]
+    };
+  }
+  if (!LOCAL.state.voucherClients || !Array.isArray(LOCAL.state.voucherClients.items)) {
+    LOCAL.state.voucherClients = { nextId: 1, items: [] };
+  }
+  if (!LOCAL.state.voucherCodes || !Array.isArray(LOCAL.state.voucherCodes.items)) {
+    LOCAL.state.voucherCodes = { items: DEFAULT_VOUCHER_CODES.slice() };
+  }
+  if (!LOCAL.state.clientCodeWastage || typeof LOCAL.state.clientCodeWastage.items !== "object") {
+    LOCAL.state.clientCodeWastage = { items: {} };
+  }
+
+  return LOCAL.state;
+}
+
+function localLoad() {
+  if (LOCAL.state) return LOCAL.state;
+  console.warn("localLoad() called before dbLoad() completed; returning defaults.");
+  return localDefaults();
+}
+
+function localSave() {
+  dbSave().catch(err => {
+    console.error("Background persistence error in localSave wrapper:", err);
+  });
+  return null;
+}
+
+const dbInitPromise = dbLoad();
+
+
+function localValidateClient(fields) {
+  for (const key of MANDATORY) { if (!String(fields[key] || "").trim()) return "Fill mandatory fields marked with *"; }
+  const numError = digitProblem(fields.pincode, "Pincode", 15) ||
+                   digitProblem(fields.phone, "Phone", 15) ||
+                   digitProblem(fields.phone2, "Phone 2", 15) ||
+                   digitProblem(fields.phone3, "Phone 3", 15);
+  if (numError) return numError;
+  const email = String(fields.email || "").trim();
+  if (email && (!email.includes("@") || !email.includes("."))) return "Email must contain both @ and .";
+  return null;
+}
+
+function localVoucherNo(seq) { return `PLK-${String(seq).padStart(5, "0")}`; }
+
+function localResolveClientId(nameCity) {
+  const wanted = String(nameCity || "").trim();
+  if (!wanted) return null;
+  const items = LOCAL.state.voucherClients.items;
+  const exact = items.find(c => `${c.name}${c.city ? " " + c.city : ""}`.trim() === wanted);
+  if (exact) return exact.id;
+  const cut = wanted.lastIndexOf(" ");
+  if (cut > 0) {
+    const split = items.find(c => c.name === wanted.slice(0, cut) && c.city === wanted.slice(cut + 1));
+    if (split) return split.id;
+  }
+  return null;
+}
+
+function localSnapshot() {
+  const s = LOCAL.state;
+  return {
+    ok: true, user: S.user, clients: s.clients.items, wastageCategories: s.settings.wastage,
+    voucherClients: s.voucherClients.items, voucherCodes: s.voucherCodes.items,
+    clientCodeWastage: s.clientCodeWastage.items, nextVoucherNo: localVoucherNo(s.settings.voucherSeq + 1)
+  };
+}
+
+// ------------------------------------------------------------ API ROUTER
+async function api(path, options) {
+  await dbInitPromise;
+  const s = await dbLoad(); const body = options && options.json ? options.json : {}; const route = path.split("?")[0];
+
+  if (route === "/api/login") {
+    const user = s.users.items.find(u => u.username === String(body.username || "").trim());
+    if (!user) return { ok: false, title: "ACCESS DENIED", message: "User does not exist." };
+    if (user.strikes >= 4 && user.role !== "superadmin") return { ok: false, title: "ACCOUNT LOCKED", message: "This account has been locked due to 4 incorrect password attempts." };
+    if (localHash(String(body.password || "").trim(), user.salt) === user.hash) {
+      user.strikes = 0; await dbSave(); S.user = { id: user.id, username: user.username, role: user.role }; return { ok: true, user: S.user };
+    }
+    if (user.role !== "superadmin") {
+      user.strikes = (user.strikes || 0) + 1; await dbSave();
+      if (user.strikes >= 4) return { ok: false, title: "ACCOUNT LOCKED", message: "STRIKE 4: Your account has been locked." };
+      return { ok: false, title: "ACCESS DENIED", message: `Invalid Password.\nStrike ${user.strikes} out of 4.` };
+    }
+    return { ok: false, title: "ACCESS DENIED", message: "Invalid Admin Credentials." };
+  }
+  if (route === "/api/logout") { S.user = null; return { ok: true }; }
+  if (!S.user) return { ok: false, error: "Please sign in again." };
+  if (route === "/api/bootstrap") return localSnapshot();
+  if (route === "/api/clients" && !(options && options.json)) return { ok: true, clients: s.clients.items };
+
+  if (route === "/api/clients") {
+    const fields = body.fields || {}; const error = localValidateClient(fields);
+    if (error) return { ok: false, error };
+    const record = {}; CLIENT_FIELDS.forEach(key => { record[key] = String(fields[key] == null ? "" : fields[key]); });
+    record.wastage = body.wastage && typeof body.wastage === "object" ? body.wastage : {};
+    record.photos = (body.photos || []).slice(0, MAX_CLIENT_PHOTOS).map(p => (p.kind === "new" ? p.data : p.path)).filter(Boolean);
+    const bodyIdStr = body.id != null ? String(body.id).trim() : "";
+    const existing = bodyIdStr ? s.clients.items.find(c => String(c.id).trim() === bodyIdStr) : null;
+    if (existing) Object.assign(existing, record);
+    else {
+      if (bodyIdStr) {
+        record.id = bodyIdStr;
+        const numId = Number(bodyIdStr);
+        if (!isNaN(numId) && numId >= s.clients.nextId) {
+          s.clients.nextId = Math.floor(numId) + 1;
+        }
+      } else {
+        record.id = s.clients.nextId++;
+      }
+      const d = new Date(); const p = n => String(n).padStart(2, "0");
+      record.created = `${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}`;
+      s.clients.items.push(record);
+    }
+    const quota = await dbSave(); if (quota) return { ok: false, error: quota };
+    return { ok: true, client: existing || record, clients: s.clients.items };
+  }
+  if (route === "/api/clients/delete") {
+    const idSet = new Set((body.ids || []).map(id => String(id).trim()));
+    s.clients.items = s.clients.items.filter(c => !idSet.has(String(c.id).trim()));
+    const quota = await dbSave(); if (quota) return { ok: false, error: quota };
+    return { ok: true, clients: s.clients.items };
+  }
+  if (route === "/api/wastage-categories") {
+    const name = String(body.name || "").trim().toUpperCase();
+    if (!name) return { ok: false, error: "Category name required" };
+    const list = s.settings.wastage;
+    if (body.action === "delete") { const at = list.indexOf(name); if (at >= 0) list.splice(at, 1); }
+    else if (!list.includes(name)) list.push(name);
+    const quota = await dbSave(); if (quota) return { ok: false, error: quota };
+    return { ok: true, wastageCategories: list };
+  }
+  if (route === "/api/voucher-clients") {
+    const name = String(body.name || "").trim(); const city = String(body.city || "").trim();
+    if (!name || !city) return { ok: false, error: "Both fields required" };
+    if (s.voucherClients.items.some(c => c.name === name && c.city === city)) return { ok: false, error: "Client already exists" };
+    s.voucherClients.items.push({ id: s.voucherClients.nextId++, name, city });
+    const quota = await dbSave(); if (quota) return { ok: false, error: quota };
+    return { ok: true, voucherClients: s.voucherClients.items };
+  }
+  if (route === "/api/voucher-codes") {
+    const code = String(body.code || "").trim().toUpperCase();
+    if (!code) return { ok: false, error: "Code required" };
+    const exists = s.voucherCodes.items.includes(code);
+    if (!exists) { s.voucherCodes.items.push(code); const quota = await dbSave(); if (quota) return { ok: false, error: quota }; }
+    return { ok: true, added: !exists, voucherCodes: s.voucherCodes.items };
+  }
+  if (route === "/api/client-code-wastage") {
+    const code = String(body.code || "").trim(); const value = Number(body.value);
+    if (!code || !Number.isFinite(value)) return { ok: false, error: "Enter a valid wastage value before saving." };
+    let clientId = localResolveClientId(body.client);
+    if (!clientId) {
+      const name = String(body.client || "").trim();
+      if (!name) return { ok: false, error: "Select a client and code before saving wastage." };
+      clientId = s.voucherClients.nextId++; s.voucherClients.items.push({ id: clientId, name, city: "" });
+    }
+    s.clientCodeWastage.items[`${clientId}|${code}`] = value;
+    const quota = await dbSave(); if (quota) return { ok: false, error: quota };
+    return { ok: true, clientCodeWastage: s.clientCodeWastage.items, voucherClients: s.voucherClients.items };
+  }
+  if (route === "/api/voucher-number") return { ok: true, nextVoucherNo: localVoucherNo(s.settings.voucherSeq + 1) };
+  if (route === "/api/voucher-number/commit") {
+    s.settings.voucherSeq += 1;
+    const quota = await dbSave(); if (quota) return { ok: false, error: quota };
+    return { ok: true, voucherNo: localVoucherNo(s.settings.voucherSeq), nextVoucherNo: localVoucherNo(s.settings.voucherSeq + 1) };
+  }
+  if (route === "/api/users") {
+    if (S.user.role !== "superadmin") return { ok: false, error: "ACCESS DENIED" };
+    if (!options || !options.json) return { ok: true, users: s.users.items.map(u => ({ id: u.id, username: u.username, role: u.role, strikes: u.strikes })) };
+    const username = String(body.username || "").trim(), password = String(body.password || "").trim();
+    const role = body.role === "superadmin" ? "superadmin" : "staff";
+    const existing = body.id ? s.users.items.find(u => u.id === Number(body.id)) : null;
+    if (!username || (!password && !existing)) return { ok: false, silent: true };
+    if (!existing) {
+      const count = s.users.items.filter(u => u.role === role).length;
+      if (role === "superadmin" && count >= 2) return { ok: false, title: "LIMIT REACHED", message: "Maximum 2 Super Admin accounts allowed." };
+      if (role === "staff" && count >= 3) return { ok: false, title: "LIMIT REACHED", message: "Maximum 3 staff accounts allowed." };
+    }
+    if (s.users.items.some(u => u.username === username && u.id !== (existing ? existing.id : 0))) return { ok: false, title: "DUPLICATE", message: "That username is already taken." };
+    if (existing) {
+      existing.username = username; if (password) Object.assign(existing, localHashPassword(password));
+      existing.role = role; existing.strikes = 0; if (S.user.id === existing.id) S.user = { id: existing.id, username, role };
+    } else { s.users.items.push(Object.assign({ id: s.users.nextId++, username, role, strikes: 0, active: 1 }, localHashPassword(password))); }
+    const quota = await dbSave(); if (quota) return { ok: false, error: quota };
+    return { ok: true, users: s.users.items.map(u => ({ id: u.id, username: u.username, role: u.role, strikes: u.strikes })) };
+  }
+  if (route === "/api/users/delete") {
+    if (S.user.role !== "superadmin") return { ok: false, error: "ACCESS DENIED" };
+    const id = Number(body.id) || 0; if (!id) return { ok: false, silent: true };
+    if (id === S.user.id) return { ok: false, title: "DENIED", message: "Cannot delete yourself." };
+    s.users.items = s.users.items.filter(u => u.id !== id);
+    const quota = await dbSave(); if (quota) return { ok: false, error: quota };
+    return { ok: true, users: s.users.items.map(u => ({ id: u.id, username: u.username, role: u.role, strikes: u.strikes })) };
+  }
+  return { ok: false, error: "Internal error: Route not found." };
+}
+
+function updateClientCounter() {
+  const el = $("clientCounter");
+  if (!el) return;
+  const count = (S.clients && Array.isArray(S.clients)) ? S.clients.length : 0;
+  el.textContent = `Total Clients: ${count}`;
+}
+
+let clientsStamp = 0;
+function absorb(payload) {
+  if (!payload) return;
+  if (payload.clients) { S.clients = payload.clients; clientsStamp += 1; }
+  if (payload.wastageCategories) S.wastageCategories = payload.wastageCategories;
+  if (payload.voucherClients) S.voucherClients = payload.voucherClients;
+  if (payload.voucherCodes) S.voucherCodes = payload.voucherCodes;
+  if (payload.clientCodeWastage) S.clientCodeWastage = payload.clientCodeWastage;
+  if (payload.nextVoucherNo) S.nextVoucherNo = payload.nextVoucherNo;
+  if (payload.users) S.users = payload.users;
+  updateClientCounter();
+}
+
+/* ============================================================ navigation */
+const SCREENS = { home: "screenHome", dashboard: "screenDashboard", client: "screenClient", accounts: "screenAccounts", voucher: "screenVoucher", scanner: "screenScanner" };
+let currentScreen = "home";
+
+function show(name) {
+  currentScreen = name;
+  Object.keys(SCREENS).forEach(key => { $(SCREENS[key]).classList.toggle("active", key === name); });
+  // In Mobile Nav, we usually keep the bottom nav visible everywhere, but we can hide it on forms if needed.
+  $("sidebar").classList.toggle("hidden", name === "client" || name === "voucher");
+}
+
+function isSuperadmin() { return !!(S.user && S.user.role === "superadmin"); }
+function applyRoleVisibility() { document.querySelectorAll("[data-admin]").forEach(el => { el.hidden = !isSuperadmin(); }); }
+function setTheme(mode) { document.documentElement.setAttribute("data-theme", mode === "Light" ? "light" : "dark"); localStorage.setItem("plkTheme", mode); }
+function stamp() {
+  const d = new Date(), p = n => String(n).padStart(2, "0");
+  let hours = d.getHours(); const suffix = hours >= 12 ? "PM" : "AM"; hours = hours % 12 || 12;
+  return `${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()} | ${p(hours)}:${p(d.getMinutes())}:${p(d.getSeconds())} ${suffix}`;
+}
+
+setInterval(() => {
+  const now = stamp();
+  if($("clock")) $("clock").textContent = now;
+  if($("clientClock")) $("clientClock").textContent = now;
+}, 1000);
+
+
+/* ============================================================ iOS HARDWARE BRIDGE & ACTIVATION ENGINE */
+const MASTER_SALT = "PALAK_JEWELLERS_2026_OFFLINE_SECRET_SALT_HQ";
+
+const PureCrypto = {
+  K: [
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+  ],
+  rotr: function(n, x) { return (x >>> n) | (x << (32 - n)); },
+  sha256: function(ascii) {
+    var words = [];
+    for (var i = 0; i < ascii.length * 8; i += 8) {
+      words[i >> 5] |= (ascii.charCodeAt(i / 8) & 0xff) << (24 - (i % 32));
+    }
+    var bitLength = ascii.length * 8;
+    words[bitLength >> 5] |= 0x80 << (24 - (bitLength % 32));
+    words[(((bitLength + 64) >> 9) << 4) + 15] = bitLength;
+
+    var H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+    var W = new Array(64);
+
+    for (var j = 0; j < words.length; j += 16) {
+      for (var t = 0; t < 16; t++) W[t] = words[j + t] | 0;
+      for (var t = 16; t < 64; t++) {
+        var s0 = PureCrypto.rotr(7, W[t - 15]) ^ PureCrypto.rotr(18, W[t - 15]) ^ (W[t - 15] >>> 3);
+        var s1 = PureCrypto.rotr(17, W[t - 2]) ^ PureCrypto.rotr(19, W[t - 2]) ^ (W[t - 2] >>> 10);
+        W[t] = (W[t - 16] + s0 + W[t - 7] + s1) | 0;
+      }
+      var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+      for (var t = 0; t < 64; t++) {
+        var S1 = PureCrypto.rotr(6, e) ^ PureCrypto.rotr(11, e) ^ PureCrypto.rotr(25, e);
+        var ch = (e & f) ^ (~e & g);
+        var temp1 = (h + S1 + ch + PureCrypto.K[t] + W[t]) | 0;
+        var S0 = PureCrypto.rotr(2, a) ^ PureCrypto.rotr(13, a) ^ PureCrypto.rotr(22, a);
+        var maj = (a & b) ^ (a & c) ^ (b & c);
+        var temp2 = (S0 + maj) | 0;
+        h = g; g = f; f = e; e = (d + temp1) | 0; d = c; c = b; b = a; a = (temp1 + temp2) | 0;
+      }
+      H[0] = (H[0] + a) | 0; H[1] = (H[1] + b) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0;
+      H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+    }
+    var hex = "";
+    for (var k = 0; k < 8; k++) {
+      var hx = (H[k] >>> 0).toString(16);
+      while (hx.length < 8) hx = "0" + hx;
+      hex += hx;
+    }
+    return hex.toUpperCase();
+  },
+  hmacSha256: function(key, msg) {
+    var block = 64;
+    var k = key;
+    if (k.length > block) {
+      k = "";
+      var kh = PureCrypto.sha256(key);
+      for (var i = 0; i < kh.length; i += 2) k += String.fromCharCode(parseInt(kh.substr(i, 2), 16));
+    }
+    while (k.length < block) k += String.fromCharCode(0);
+    var o_key_pad = "", i_key_pad = "";
+    for (var j = 0; j < block; j++) {
+      o_key_pad += String.fromCharCode(k.charCodeAt(j) ^ 0x5c);
+      i_key_pad += String.fromCharCode(k.charCodeAt(j) ^ 0x36);
+    }
+    var innerHash = PureCrypto.sha256(i_key_pad + msg);
+    var innerBinary = "";
+    for (var m = 0; m < innerHash.length; m += 2) {
+      innerBinary += String.fromCharCode(parseInt(innerHash.substr(m, 2), 16));
+    }
+    return PureCrypto.sha256(o_key_pad + innerBinary);
+  }
+};
+
+const PalakIOSHardwareBridge = {
+  TOKEN_STORAGE_KEY: "PLK_IOS_HARDWARE_TOKEN",
+  KEY_STORAGE_KEY: "PLK_IOS_ACTIVATION_KEY",
+
+  getDeviceToken: function() {
+    var existing = localStorage.getItem(this.TOKEN_STORAGE_KEY);
+    if (existing && existing.startsWith("PLK-")) {
+      return existing;
+    }
+    // High-entropy iOS hardware fingerprint
+    var rnd = "";
+    if (window.crypto && window.crypto.getRandomValues) {
+      var arr = new Uint8Array(8);
+      window.crypto.getRandomValues(arr);
+      for (var i = 0; i < arr.length; i++) rnd += arr[i].toString(16);
+    } else {
+      rnd = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    }
+    var entropy = [
+      navigator.userAgent || "iPhone",
+      screen.width + "x" + screen.height + "x" + (screen.colorDepth || 24),
+      navigator.hardwareConcurrency || 6,
+      rnd
+    ].join("::");
+
+    var hash = PureCrypto.sha256(entropy);
+    var token = "PLK-" + hash.substring(0, 4) + "-" + hash.substring(4, 8);
+    localStorage.setItem(this.TOKEN_STORAGE_KEY, token);
+    return token;
+  },
+
+  calculateExpectedKey: function(token) {
+    var hmac = PureCrypto.hmacSha256(MASTER_SALT, token);
+    return "PJ-" + hmac.substring(0, 4) + "-" + hmac.substring(4, 8) + "-" + hmac.substring(8, 12);
+  },
+
+  isDeviceActivated: function() {
+    var token = this.getDeviceToken();
+    var storedKey = localStorage.getItem(this.KEY_STORAGE_KEY);
+    if (!storedKey) return false;
+    var expected = this.calculateExpectedKey(token);
+    return storedKey.toUpperCase().trim() === expected;
+  },
+
+  activateDevice: function(enteredKey) {
+    var token = this.getDeviceToken();
+    var expected = this.calculateExpectedKey(token);
+    var cleanEntered = (enteredKey || "").toUpperCase().trim();
+    if (cleanEntered === expected) {
+      localStorage.setItem(this.KEY_STORAGE_KEY, expected);
+      return { success: true };
+    }
+    return { success: false, error: "Invalid activation key for this device." };
+  }
+};
+
+/* ============================================================ device activation lock */
+function isDeviceAuthorized() {
+  if (typeof window.Android !== "undefined" && typeof window.Android.isDeviceActivated === "function") {
+    try {
+      return Boolean(window.Android.isDeviceActivated());
+    } catch (e) {
+      console.error("isDeviceActivated check failed:", e);
+      return false;
+    }
+  }
+  // iOS Standalone PWA Hardware Bridge Check
+  if (typeof PalakIOSHardwareBridge !== "undefined") {
+    return PalakIOSHardwareBridge.isDeviceActivated();
+  }
+  return false;
+}
+
+function showDeviceLockScreen() {
+  const lock = $("deviceLockScreen");
+  if (lock) {
+    lock.style.display = "grid";
+    lock.hidden = false;
+  }
+  const login = $("loginScreen");
+  if (login) {
+    login.style.display = "none";
+    login.hidden = true;
+  }
+  const shell = $("shell");
+  if (shell) {
+    shell.hidden = true;
+  }
+  const bio = $("bioBtn");
+  if (bio) {
+    bio.style.display = "none";
+  }
+  const tokenEl = $("lockDeviceToken");
+  if (tokenEl) {
+    let token = "PLK-UNKNOWN";
+    if (typeof window.Android !== "undefined" && typeof window.Android.getDeviceToken === "function") {
+      try {
+        token = window.Android.getDeviceToken() || "PLK-UNKNOWN";
+    } else if (typeof PalakIOSHardwareBridge !== "undefined") {
+      token = PalakIOSHardwareBridge.getDeviceToken();
+      } catch (e) {
+        console.error("Failed to get device token:", e);
+      }
+    }
+    tokenEl.textContent = token;
+  }
+}
+
+function formatActivationKeyInput(val) {
+  if (!val) return "";
+  let raw = String(val).toUpperCase().replace(/[^0-9A-Z]/g, "");
+  if (raw.startsWith("PJ")) {
+    raw = raw.slice(2);
+  }
+  raw = raw.replace(/[^0-9A-F]/g, "").slice(0, 12);
+  if (!raw) {
+    const upper = String(val).toUpperCase().trim();
+    if (upper === "P" || upper === "PJ" || upper === "PJ-") return upper;
+    return "";
+  }
+  let res = "PJ-" + raw.slice(0, 4);
+  if (raw.length > 4) res += "-" + raw.slice(4, 8);
+  if (raw.length > 8) res += "-" + raw.slice(8, 12);
+  return res;
+}
+
+async function handleCopyDeviceToken() {
+  const tokenEl = $("lockDeviceToken");
+  const token = (tokenEl ? tokenEl.textContent : "").trim();
+  if (!token) return;
+  let copied = false;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(token);
+      copied = true;
+    }
+  } catch (e) {
+    console.warn("navigator.clipboard failed, attempting fallback:", e);
+  }
+  if (!copied) {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = token;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      copied = document.execCommand("copy");
+      document.body.removeChild(ta);
+    } catch (e2) {
+      console.error("execCommand fallback failed:", e2);
+    }
+  }
+  const btn = $("btnCopyDeviceToken");
+  if (btn) {
+    const origHtml = btn.innerHTML;
+    const origBorder = btn.style.borderColor;
+    const origColor = btn.style.color;
+    btn.innerHTML = "✅ COPIED TO CLIPBOARD!";
+    btn.style.borderColor = "var(--green, #25D366)";
+    btn.style.color = "var(--green, #25D366)";
+    setTimeout(() => {
+      btn.innerHTML = origHtml;
+      btn.style.borderColor = origBorder;
+      btn.style.color = origColor;
+    }, 2500);
+  }
+}
+
+async function handleDeviceActivation() {
+  const input = $("activationKeyInput");
+  const feedback = $("activationFeedback");
+  const btn = $("btnActivateDevice");
+  const rawKey = (input ? input.value : "").trim().toUpperCase();
+
+  if (!rawKey) {
+    if (feedback) {
+      feedback.style.color = "var(--red, #e74c3c)";
+      feedback.textContent = "Please enter your 16-character activation key.";
+    }
+    if (input) input.focus();
+    return;
+  }
+
+  if (feedback) {
+    feedback.style.color = "var(--gold, #d4af37)";
+    feedback.textContent = "Verifying cryptographic key with device hardware...";
+  }
+  if (btn) btn.disabled = true;
+
+  try {
+    let res;
+    if (window.Android && typeof window.Android.activateDevice === "function") {
+      res = window.Android.activateDevice(rawKey);
+    } else if (typeof PalakIOSHardwareBridge !== "undefined") {
+      res = PalakIOSHardwareBridge.activateDevice(rawKey);
+    } else {
+      if (feedback) {
+        feedback.style.color = "var(--red, #e74c3c)";
+        feedback.textContent = "Device activation subsystem not detected.";
+      }
+      if (btn) btn.disabled = false;
+      return;
+    }
+    if (typeof res === "string") {
+      try { res = JSON.parse(res); } catch (e) {}
+    }
+
+    if (res === true || (res && res.success === true)) {
+      if (feedback) {
+        feedback.style.color = "var(--green, #25D366)";
+        feedback.textContent = "✅ Device activated successfully! Welcome to Palak CRM.";
+      }
+      if (btn) {
+        btn.style.background = "var(--green, #25D366)";
+        btn.style.color = "#000";
+        btn.textContent = "ACTIVATED";
+      }
+
+      setTimeout(() => {
+        // Permanent smooth transition: hide lock screen and reveal login screen
+        const lock = $("deviceLockScreen");
+        if (lock) {
+          lock.style.display = "none";
+          lock.hidden = true;
+        }
+        const login = $("loginScreen");
+        if (login) {
+          login.hidden = false;
+          login.style.display = "";
+        }
+        const bio = $("bioBtn");
+        if (bio && window.Android && window.Android.authenticateBiometric) {
+          bio.style.display = "block";
+        }
+        const userInp = $("loginUser");
+        if (userInp) userInp.focus();
+      }, 700);
+    } else {
+      const errMsg = (res && res.error) ? res.error : "Invalid activation key for this hardware device";
+      if (feedback) {
+        feedback.style.color = "var(--red, #e74c3c)";
+        feedback.textContent = `❌ ${errMsg}`;
+      }
+      if (btn) btn.disabled = false;
+      if (input) input.select();
+    }
+  } catch (err) {
+    if (feedback) {
+      feedback.style.color = "var(--red, #e74c3c)";
+      feedback.textContent = `❌ Activation failed: ${err.message || err}`;
+    }
+    if (btn) btn.disabled = false;
+  }
+}
+
+/* ============================================================ login */
+$("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const username = $("loginUser").value, password = $("loginPass").value;
+  const payload = await api("/api/login", { json: { username, password } });
+  if (!payload.ok) return say(payload.title || "ACCESS DENIED", payload.message || payload.error || "Login failed.");
+  $("loginPass").value = "";
+  await enterApp();
+  if (window.Android && window.Android.registerBiometric) {
+    window.Android.registerBiometric(username);
+  }
+});
+async function enterApp() {
+  if (!isDeviceAuthorized()) {
+    showDeviceLockScreen();
+    return;
+  }
+  await dbInitPromise;
+  const payload = await api("/api/bootstrap"); if (!payload.ok) return;
+  absorb(payload); applyRoleVisibility();
+  $("loginScreen").hidden = true; $("shell").hidden = false;
+  if($("clock")) $("clock").textContent = stamp();
+  show("home");
+}
+async function logout(silent) {
+  if (!silent) await api("/api/logout", { method: "POST" });
+  if (!isDeviceAuthorized()) {
+    showDeviceLockScreen();
+    return;
+  }
+  $("shell").hidden = true; $("loginScreen").hidden = false;
+  $("loginUser").value = ""; $("loginPass").value = "";
+}
+
+document.querySelectorAll("[data-go]").forEach(button => {
+  button.addEventListener("click", async () => {
+    const target = button.getAttribute("data-go");
+    if (target === "logout") return logout();
+    if (target === "newclient") return openClientForm(null);
+    if (target === "accounts") { if (!isSuperadmin()) return say("ACCESS DENIED", "Manage Accounts is available only for superadmin users."); return openAccounts(); }
+    if (target === "voucher") { if (!isSuperadmin()) return say("ACCESS DENIED", "Issue Voucher is available only for superadmin users."); return openVoucher(); }
+    if (target === "dashboard") return openDashboard();
+    show(target);
+  });
+});
+
+/* ============================================================ dashboard */
+const dash = { filtered: [], checked: new Set(), cursor: -1, index: [], stamp: -1 };
+
+function buildClientIndex() {
+  dash.index = S.clients.map(client => ({
+    id: client.id, client, key: String(client.company || "").toLowerCase(),
+    find: `${client.id != null ? client.id : ""}\n${client.company || ""}\n${client.address || ""}\n${client.city || ""}\n${client.state || ""}\n${client.phone || ""}\n${client.phone2 || ""}\n${client.phone3 || ""}\n${client.person || ""}\n${client.gst || ""}\n${client.managed || ""}`.toLowerCase(),
+    cells: `<td>${esc(client.company)}</td><td>${esc(client.city)}</td>`
+  })).sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+  dash.stamp = clientsStamp;
+}
+
+async function openDashboard() {
+  const payload = await api("/api/clients"); if (payload.ok) absorb(payload);
+  show("dashboard"); renderClients();
+}
+
+let ROW_H = 37;
+function renderClients() {
+  if (dash.stamp !== clientsStamp) buildClientIndex();
+  const needle = $("search").value.trim().toLowerCase();
+  dash.filtered = needle ? dash.index.filter(row => row.find.includes(needle)) : dash.index;
+  if (dash.cursor >= dash.filtered.length) dash.cursor = dash.filtered.length - 1;
+  renderWindow();
+  updateClientCounter();
+}
+
+function renderWindow() {
+  const box = $("tableWrap"); const total = Math.max(dash.filtered.length, 25);
+  const perScreen = Math.ceil((box.clientHeight || 600) / ROW_H) + 8;
+  const start = Math.max(0, Math.floor((box.scrollTop || 0) / ROW_H) - 4);
+  const end = Math.min(total, start + perScreen);
+  const parts = [];
+  if (start > 0) parts.push(`<tr class="spacer" style="height:${start * ROW_H}px"><td colspan="3"></td></tr>`);
+  for (let i = start; i < end; i++) {
+    const stripe = i % 2 === 0 ? "evenrow" : "oddrow"; const row = dash.filtered[i];
+    if (row) parts.push(`<tr class="${stripe}${i === dash.cursor ? " sel" : ""}" data-index="${i}"><td class="tick">${dash.checked.has(row.id) ? "&#9745;" : "&#9744;"}</td>${row.cells}</tr>`);
+    else parts.push(`<tr class="${stripe} empty"><td class="tick">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>`);
+  }
+  if (end < total) parts.push(`<tr class="spacer" style="height:${(total - end) * ROW_H}px"><td colspan="3"></td></tr>`);
+  $("clientRows").innerHTML = parts.join("");
+  const sample = $("clientRows").querySelector("tr[data-index]");
+  if (sample) {
+    const measured = sample.getBoundingClientRect().height;
+    if (measured && Math.abs(measured - ROW_H) > 0.5) { ROW_H = measured; renderWindow(); }
+  }
+}
+
+function ensureCursorVisible() {
+  const box = $("tableWrap"); const top = dash.cursor * ROW_H;
+  if (top < box.scrollTop) box.scrollTop = top;
+  else if (top + ROW_H > box.scrollTop + box.clientHeight) box.scrollTop = top + ROW_H - box.clientHeight;
+}
+function paintRowStates() {
+  $("clientRows").querySelectorAll("tr[data-index]").forEach(tr => {
+    const index = Number(tr.getAttribute("data-index")); const row = dash.filtered[index]; if (!row) return;
+    tr.classList.toggle("sel", index === dash.cursor);
+    const mark = dash.checked.has(row.id) ? "☑" : "☐"; if (tr.firstElementChild.textContent !== mark) tr.firstElementChild.textContent = mark;
+  });
+}
+function checkedClientIds() { return dash.filtered.filter(row => dash.checked.has(row.id)).map(row => row.id); }
+
+function moveCursor(delta) {
+  if (!dash.filtered.length) return;
+  const next = dash.cursor < 0 ? (delta > 0 ? 0 : dash.filtered.length - 1) : dash.cursor + delta;
+  dash.cursor = Math.max(0, Math.min(dash.filtered.length - 1, next));
+  ensureCursorVisible(); renderWindow();
+}
+
+$("search").addEventListener("input", () => { dash.cursor = -1; $("tableWrap").scrollTop = 0; renderClients(); });
+let scrollFrame = null;
+$("tableWrap").addEventListener("scroll", () => {
+  if (scrollFrame) return;
+  scrollFrame = requestAnimationFrame(() => { scrollFrame = null; renderWindow(); });
+}, { passive: true });
+$("search").addEventListener("keydown", event => {
+  if (event.key === "ArrowDown" || event.key === "Enter") {
+    event.preventDefault(); if (!dash.filtered.length) return;
+    dash.cursor = 0; $("tableWrap").focus(); ensureCursorVisible(); renderWindow();
+  }
+});
+$("clientRows").addEventListener("click", event => {
+  const row = event.target.closest("tr[data-index]"); if (!row) return;
+  const index = Number(row.getAttribute("data-index")); const entry = dash.filtered[index]; if (!entry) return;
+  dash.cursor = index;
+  if (event.target.classList.contains("tick")) { if (dash.checked.has(entry.id)) dash.checked.delete(entry.id); else dash.checked.add(entry.id); }
+  paintRowStates();
+});
+$("clientRows").addEventListener("dblclick", event => {
+  const row = event.target.closest("tr[data-index]"); if (!row || event.target.classList.contains("tick")) return;
+  const entry = dash.filtered[Number(row.getAttribute("data-index"))]; if (entry) openClientForm(entry.client);
+});
+
+document.addEventListener("keydown", event => {
+  if (currentScreen !== "dashboard" || document.querySelector(".veil")) return;
+  const inSearch = document.activeElement === $("search");
+  if (event.key === "ArrowDown" && !inSearch) { event.preventDefault(); moveCursor(1); return; }
+  if (event.key === "ArrowUp" && !inSearch) { event.preventDefault(); moveCursor(-1); return; }
+  if (event.key === "Enter" && !inSearch) { event.preventDefault(); const entry = dash.filtered[dash.cursor]; if (entry) openClientForm(entry.client); return; }
+  if (event.key === " " && !inSearch) {
+    event.preventDefault(); const entry = dash.filtered[dash.cursor]; if (!entry) return;
+    if (dash.checked.has(entry.id)) dash.checked.delete(entry.id); else dash.checked.add(entry.id); paintRowStates(); return;
+  }
+  if (event.key === "Backspace" && !inSearch) { event.preventDefault(); $("search").focus(); }
+});
+
+$("checkAll").addEventListener("click", () => { dash.filtered.forEach(row => dash.checked.add(row.id)); paintRowStates(); });
+$("checkNone").addEventListener("click", () => { dash.filtered.forEach(row => dash.checked.delete(row.id)); paintRowStates(); });
+$("btnEdit").addEventListener("click", () => {
+  const ids = checkedClientIds(); if (ids.length !== 1) return say("EDIT", "Check ONE box to edit.");
+  openClientForm(S.clients.find(c => String(c.id).trim() === String(ids[0]).trim()));
+});
+$("btnDelete").addEventListener("click", async () => {
+  const ids = checkedClientIds(); if (!ids.length) return say("WARNING", "Check the boxes to delete.");
+  if (!await ask("DELETE", `Delete ${ids.length} selected clients?`, "DELETE")) return;
+  const payload = await api("/api/clients/delete", { json: { ids } });
+  if (!payload.ok) return say("DELETE", payload.error || "Could not delete.");
+  absorb(payload); ids.forEach(id => dash.checked.delete(id)); renderClients();
+});
+$("btnBackup").addEventListener("click", () => {
+  if (!isSuperadmin()) return say("ACCESS DENIED", "Backup is available only for superadmin users.");
+  const stamp = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 15);
+  saveBlob(new Blob([JSON.stringify({ savedAt: new Date().toISOString(), data: LOCAL.state }, null, 2)], { type: "application/json" }), `PALAK_BACKUP_${stamp}.json`);
+});
+$("btnExport").addEventListener("click", async () => {
+  if (!isSuperadmin()) return say("ACCESS DENIED", "Export is available only for superadmin users.");
+  let ids = checkedClientIds();
+  if (!ids.length) {
+    ids = (dash.filtered && dash.filtered.length) ? dash.filtered.map(r => r.id) : S.clients.map(c => c.id);
+  }
+  if (!ids.length) return say("EXPORT", "No client records available to export.");
+  const stamp = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 15);
+  saveBlob(offlineWorkbook(ids), `Palak_Data_Export_${stamp}.xlsx`);
+});
+$("btnImport").addEventListener("click", () => {
+  if (!isSuperadmin()) return say("ACCESS DENIED", "Import is available only for superadmin users."); $("importInput").click();
+});
+$("importInput").addEventListener("change", async event => {
+  const file = event.target.files[0]; event.target.value = ""; if (!file) return;
+  try {
+    const payload = await offlineImport(file); if (!payload.ok) return say("IMPORT ERROR", payload.error || "Could not read file.");
+    absorb(payload); dash.cursor = -1; $("search").value = ""; renderClients();
+    say("IMPORT COMPLETE", `New clients: ${payload.added}\nUpdated: ${payload.updated}\nUnchanged: ${payload.unchanged}`);
+  } catch (error) { return say("IMPORT ERROR", `Could not read file.\n${error.message}`); }
+});
+
+// --- UPDATED FOR ANDROID NATIVE DOWNLOAD FALLBACK ---
+function saveBlob(blob, filename) {
+  if (window.Android && window.Android.downloadFile) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1];
+      window.Android.downloadFile(base64, filename);
+    };
+    reader.readAsDataURL(blob);
+  } else {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url; link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+}
+
+/* ---------- local Excel building and reading ---------- */
+const EXPORT_HEADERS = [ "ID", "COMPANY", "GST", "ADDRESS", "CITY", "STATE", "PINCODE", "PERSON", "PHONE", "PHONE2", "PHONE3", "EMAIL", "MANAGED", "LOGISTICS", "BILLING", "SHIPPING", "PARCEL CHARGES", "PARCEL DAY", "DELIVERY", "SCREW", "STONE", "REQUIREMENT", "LOGO", "RATECUT/UNFIX", "ORDER PARCEL CHARGE", "WASTAGE", "DOCUMENT 1", "DOCUMENT 2", "DOCUMENT 3", "DOCUMENT 4", "DOCUMENT 5" ];
+function xmlEscape(value) { return String(value == null ? "" : value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g, ""); }
+function colName(index) { let name = ""; let n = index; while (n > 0) { const m = (n - 1) % 26; name = String.fromCharCode(65 + m) + name; n = Math.floor((n - m) / 26); } return name; }
+function crc32(bytes) {
+  let table = crc32.table;
+  if (!table) { table = crc32.table = new Uint32Array(256); for (let i = 0; i < 256; i++) { let c = i; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; table[i] = c >>> 0; } }
+  let crc = 0xffffffff; for (const b of bytes) crc = table[(crc ^ b) & 255] ^ (crc >>> 8); return (crc ^ 0xffffffff) >>> 0;
+}
+function zipStored(files) {
+  const enc = new TextEncoder(), u16 = n => [n & 255, (n >>> 8) & 255], u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+  const chunks = [], central = []; let offset = 0;
+  for (const file of files) {
+    const name = enc.encode(file.name), data = enc.encode(file.content), crc = crc32(data);
+    const local = new Uint8Array([...u32(0x04034b50), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(name.length), ...u16(0)]);
+    chunks.push(local, name, data); central.push({ name, data, crc, offset }); offset += local.length + name.length + data.length;
+  }
+  const centralStart = offset;
+  for (const item of central) {
+    const header = new Uint8Array([...u32(0x02014b50), ...u16(20), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(item.crc), ...u32(item.data.length), ...u32(item.data.length), ...u16(item.name.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(item.offset)]);
+    chunks.push(header, item.name); offset += header.length + item.name.length;
+  }
+  chunks.push(new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(central.length), ...u16(central.length), ...u32(offset - centralStart), ...u32(centralStart), ...u16(0)]));
+  return new Blob(chunks, { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+function offlineWorkbook(ids) {
+  const rows = [EXPORT_HEADERS.slice()];
+  ids.forEach(id => {
+    const client = S.clients.find(c => String(c.id).trim() === String(id).trim()); if (!client) return;
+    const row = [String(client.id || "")];
+    CLIENT_FIELDS.forEach(key => row.push(String(client[key] == null ? "" : client[key])));
+    row.push(JSON.stringify(client.wastage || {}));
+    for (let i = 0; i < MAX_CLIENT_PHOTOS; i++) row.push((client.photos || [])[i] ? "(stored)" : "");
+    rows.push(row);
+  });
+  const sheet = rows.map((row, r) => `<row r="${r + 1}">${row.map((value, c) => value === "" ? "" : `<c r="${colName(c + 1)}${r + 1}" t="inlineStr"><is><t xml:space="preserve">${xmlEscape(value)}</t></is></c>`).join("")}</row>`).join("");
+  return zipStored([
+    { name: "[Content_Types].xml", content: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>' },
+    { name: "_rels/.rels", content: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: "xl/workbook.xml", content: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="CLIENTS" sheetId="1" r:id="rId1"/></sheets></workbook>' },
+    { name: "xl/_rels/workbook.xml.rels", content: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>' },
+    { name: "xl/worksheets/sheet1.xml", content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${sheet}</sheetData></worksheet>` }
+  ]);
+}
+async function offlineReadXlsx(buffer) {
+  const view = new DataView(buffer), bytes = new Uint8Array(buffer); let eocd = -1;
+  for (let i = bytes.length - 22; i >= 0; i--) { if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; } }
+  if (eocd < 0) throw new Error("Invalid .xlsx workbook.");
+  const count = view.getUint16(eocd + 10, true); let pointer = view.getUint32(eocd + 16, true);
+  const files = new Map(), decoder = new TextDecoder();
+  for (let i = 0; i < count; i++) {
+    if (view.getUint32(pointer, true) !== 0x02014b50) break;
+    const method = view.getUint16(pointer + 10, true), size = view.getUint32(pointer + 20, true);
+    const nameLength = view.getUint16(pointer + 28, true), extraLength = view.getUint16(pointer + 30, true), commentLength = view.getUint16(pointer + 32, true);
+    const localOffset = view.getUint32(pointer + 42, true);
+    const name = decoder.decode(bytes.slice(pointer + 46, pointer + 46 + nameLength));
+    const dataStart = localOffset + 30 + view.getUint16(localOffset + 26, true) + view.getUint16(localOffset + 28, true);
+    const raw = bytes.slice(dataStart, dataStart + size);
+    if (method === 0) files.set(name, decoder.decode(raw));
+    else if (typeof DecompressionStream === "function") files.set(name, decoder.decode(new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer())));
+    else throw new Error("Browser cannot decompress Excel file.");
+    pointer += 46 + nameLength + extraLength + commentLength;
+  }
+  const unescapeXml = v => String(v).replace(/&#(\d+);/g, (_, c) => String.fromCharCode(Number(c))).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+  const textOf = fragment => (fragment.match(/<t[^>]*\/>|<t[^>]*>([\s\S]*?)<\/t>/g) || []).map(part => unescapeXml(part.replace(/<t[^>]*>/, "").replace(/<\/t>/, ""))).join("");
+  const shared = (files.get("xl/sharedStrings.xml") || "").match(/<si[^>]*\/>|<si[\s>][\s\S]*?<\/si>/g) || [];
+  const strings = shared.map(textOf);
+  let sheetPath = "xl/worksheets/sheet1.xml"; const workbook = files.get("xl/workbook.xml"), rels = files.get("xl/_rels/workbook.xml.rels");
+  if (workbook && rels) { const first = workbook.match(/<sheet\b[^>]*r:id="([^"]+)"/); if (first) { const rel = rels.match(new RegExp(`<Relationship[^>]*Id="${first[1]}"[^>]*Target="([^"]+)"`)); if (rel) { const target = rel[1].replace(/^\//, ""); sheetPath = target.startsWith("xl/") ? target : `xl/${target}`; } } }
+  const sheet = files.get(sheetPath) || files.get("xl/worksheets/sheet1.xml");
+  if (!sheet) throw new Error("No readable sheet.");
+  const columnIndex = ref => { const letters = (ref.match(/^[A-Z]+/) || ["A"])[0]; let n = 0; for (const ch of letters) n = n * 26 + (ch.charCodeAt(0) - 64); return n - 1; };
+  return (sheet.match(/<row[^>]*\/>|<row[\s>][\s\S]*?<\/row>/g) || []).map(rowXml => {
+    const cells = []; (rowXml.match(/<c[^>]*\/>|<c[\s>][\s\S]*?<\/c>/g) || []).forEach(cellXml => {
+      const ref = cellXml.match(/\br="([A-Z]+\d+)"/), index = ref ? columnIndex(ref[1]) : cells.length;
+      const type = (cellXml.match(/\bt="([^"]+)"/) || [null, "n"])[1]; let value = "";
+      if (type === "inlineStr") value = textOf(cellXml); else { const raw = (cellXml.match(/<v[^>]*>([\s\S]*?)<\/v>/) || [null, ""])[1]; value = type === "s" ? (strings[Number(unescapeXml(raw))] || "") : unescapeXml(raw); }
+      while (cells.length < index) cells.push(""); cells[index] = value;
+    }); return cells;
+  });
+}
+
+function normStr(v) {
+  return String(v == null ? "" : v).trim().replace(/\s+/g, " ").toUpperCase();
+}
+
+function normPhone(v) {
+  const digits = String(v == null ? "" : v).replace(/\D/g, "");
+  return digits.length >= 10 ? digits.slice(-10) : digits;
+}
+
+function clientKey(company, city) { return `${normStr(company)}|${normStr(city)}`; }
+function parseWastageCell(cell) { try { const parsed = JSON.parse(String(cell || "{}")); if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) return parsed; } catch {} return {}; }
+
+const HEADER_FIELD_MAP = {
+  "ID": "id", "CLIENT ID": "id", "CLIENT_ID": "id",
+  "COMPANY": "company", "COMPANY NAME": "company",
+  "GST": "gst", "GSTIN": "gst", "GSTIN/UIN": "gst", "GSTIN / UIN": "gst",
+  "ADDRESS": "address",
+  "CITY": "city",
+  "STATE": "state",
+  "PINCODE": "pincode", "PIN": "pincode", "PIN CODE": "pincode",
+  "PERSON": "person", "NAME": "person", "CONTACT PERSON": "person", "PERSON NAME": "person",
+  "PHONE": "phone", "MOBILE": "phone", "PHONE 1": "phone", "CONTACT": "phone", "MOBILE 1": "phone",
+  "PHONE2": "phone2", "MOBILE 2": "phone2", "PHONE 2": "phone2", "CONTACT 2": "phone2",
+  "PHONE3": "phone3", "MOBILE 3": "phone3", "PHONE 3": "phone3", "CONTACT 3": "phone3",
+  "EMAIL": "email",
+  "MANAGED": "managed", "MANAGED BY": "managed",
+  "LOGISTICS": "logistics",
+  "BILLING": "billing",
+  "SHIPPING": "shipping",
+  "PARCEL CHARGES": "parcel_charges", "PARCEL_CHARGES": "parcel_charges",
+  "PARCEL DAY": "parcel_day", "PARCEL_DAY": "parcel_day",
+  "DELIVERY": "delivery",
+  "SCREW": "screw",
+  "STONE": "stone",
+  "REQUIREMENT": "requirement",
+  "LOGO": "logo",
+  "RATECUT/UNFIX": "ratecut_unfix", "RATECUT_UNFIX": "ratecut_unfix", "RATECUT": "ratecut_unfix", "UNFIX": "ratecut_unfix",
+  "ORDER PARCEL CHARGE": "order_parcel_charge", "ORDER_PARCEL_CHARGE": "order_parcel_charge",
+  "WASTAGE": "wastage"
+};
+
+async function offlineImport(file) {
+  const rows = await offlineReadXlsx(await file.arrayBuffer());
+  const s = await dbLoad();
+  if (!rows || rows.length < 2) {
+    return { ok: false, error: "The Excel file is empty or has no data rows." };
+  }
+
+  let added = 0, updated = 0, unchanged = 0;
+
+  // Build column mapping from header row (row 0)
+  const headerRow = rows[0] || [];
+  const colToFieldMap = {};
+  headerRow.forEach((cell, c) => {
+    const text = normStr(cell);
+    if (HEADER_FIELD_MAP[text]) {
+      colToFieldMap[c] = HEADER_FIELD_MAP[text];
+    }
+  });
+
+  // Fallback if headers are unrecognized
+  if (Object.keys(colToFieldMap).length === 0) {
+    CLIENT_FIELDS.forEach((field, i) => { colToFieldMap[i] = field; });
+    colToFieldMap[23] = "wastage";
+  }
+
+  // Ensure state structure safety
+  if (!s.clients) s.clients = { nextId: 1, items: [] };
+  if (!Array.isArray(s.clients.items)) s.clients.items = [];
+  if (!s.voucherClients) s.voucherClients = { nextId: 1, items: [] };
+  if (!Array.isArray(s.voucherClients.items)) s.voucherClients.items = [];
+
+  // Pre-index existing clients into 5 O(1) lookup Map instances
+  const mapById = new Map();
+  const mapByGst = new Map();
+  const mapByCompCity = new Map();
+  const mapByComp = new Map();
+  const mapByPhone = new Map();
+  const mapVoucher = new Map();
+
+  function indexClient(c, overwrite = false) {
+    if (!c) return;
+    if (c.id != null) {
+      const idKey = String(c.id).trim();
+      if (idKey) {
+        if (!mapById.has(idKey) || overwrite) mapById.set(idKey, c);
+        const numId = Number(idKey);
+        if (!isNaN(numId) && (!mapById.has(numId) || overwrite)) mapById.set(numId, c);
+      }
+    }
+    const gst = normStr(c.gst);
+    if (gst.length >= 5 && (!mapByGst.has(gst) || overwrite)) mapByGst.set(gst, c);
+
+    const comp = normStr(c.company);
+    const city = normStr(c.city);
+    if (comp && city) {
+      const key = `${comp}|${city}`;
+      if (!mapByCompCity.has(key) || overwrite) mapByCompCity.set(key, c);
+    }
+    if (comp && (!mapByComp.has(comp) || overwrite)) mapByComp.set(comp, c);
+
+    const p1 = normPhone(c.phone);
+    if (p1.length >= 10 && (!mapByPhone.has(p1) || overwrite)) mapByPhone.set(p1, c);
+    const p2 = normPhone(c.phone2);
+    if (p2.length >= 10 && (!mapByPhone.has(p2) || overwrite)) mapByPhone.set(p2, c);
+  }
+
+  s.clients.items.forEach(c => indexClient(c, false));
+
+  s.voucherClients.items.forEach(vc => {
+    if (vc && vc.name) {
+      if (!mapVoucher.has(vc.name)) mapVoucher.set(vc.name, vc);
+      const n = normStr(vc.name);
+      if (n && !mapVoucher.has(n)) mapVoucher.set(n, vc);
+    }
+  });
+
+  const dataRows = rows.slice(1);
+  const totalRows = dataRows.length;
+  const CHUNK_SIZE = 300;
+
+  // Live progress feedback indicator in DOM
+  let progressOverlay = null;
+  if (typeof document !== "undefined" && document.body) {
+    progressOverlay = document.createElement("div");
+    progressOverlay.className = "veil";
+    progressOverlay.id = "importProgressVeil";
+    progressOverlay.innerHTML = `
+      <div class="modal" style="text-align:center; min-width:320px;">
+        <h3 style="margin-top:0;">IMPORTING CLIENTS</h3>
+        <div id="importProgressText" style="font-size:15px; font-weight:600; margin:14px 0 6px;">
+          Importing: 0 / ${totalRows.toLocaleString()} (0%)...
+        </div>
+        <div style="background:var(--sunken); border-radius:8px; height:12px; overflow:hidden; margin-bottom:12px;">
+          <div id="importProgressBar" style="background:var(--gold); height:100%; width:0%; transition:width 0.1s ease;"></div>
+        </div>
+        <div id="importStats" style="font-size:12px; color:var(--muted);">
+          New: 0 &nbsp;|&nbsp; Updated: 0 &nbsp;|&nbsp; Unchanged: 0
+        </div>
+      </div>
+    `;
+    document.body.appendChild(progressOverlay);
+  }
+
+  function updateProgress(processed) {
+    const textEl = $("importProgressText");
+    const barEl = $("importProgressBar");
+    const statsEl = $("importStats");
+    const pct = totalRows > 0 ? Math.min(100, Math.floor((processed / totalRows) * 100)) : 100;
+    if (textEl) textEl.textContent = `Importing: ${processed.toLocaleString()} / ${totalRows.toLocaleString()} (${pct}%)...`;
+    if (barEl) barEl.style.width = `${pct}%`;
+    if (statsEl) statsEl.innerHTML = `New: ${added.toLocaleString()} &nbsp;|&nbsp; Updated: ${updated.toLocaleString()} &nbsp;|&nbsp; Unchanged: ${unchanged.toLocaleString()}`;
+  }
+
+  try {
+    for (let chunkStart = 0; chunkStart < totalRows; chunkStart += CHUNK_SIZE) {
+      const chunkEnd = Math.min(chunkStart + CHUNK_SIZE, totalRows);
+      for (let r = chunkStart; r < chunkEnd; r++) {
+        const row = dataRows[r];
+        if (!row || row.length === 0) continue;
+
+        const record = {};
+        Object.keys(colToFieldMap).forEach(colIndex => {
+          const field = colToFieldMap[colIndex];
+          record[field] = String(row[colIndex] == null ? "" : row[colIndex]).trim();
+        });
+
+        if (!record.company && !record.gst && !record.phone && !record.id) continue;
+
+        let existing = null;
+
+        // Option 3 (Pure Import): Strictly match/update only by unique Client ID or GSTIN (>= 5 chars)
+        // 1. By exact String ID
+        if (record.id != null) {
+          const targetId = String(record.id).trim();
+          if (targetId) {
+            existing = mapById.get(targetId) || (!isNaN(Number(targetId)) ? mapById.get(Number(targetId)) : null);
+          }
+        }
+
+        // 2. By GSTIN (minimum 5 chars)
+        if (!existing && record.gst) {
+          const targetGst = normStr(record.gst);
+          if (targetGst.length >= 5) {
+            existing = mapByGst.get(targetGst);
+          }
+        }
+
+        if (existing) {
+          // Compare all fields first; preserve empty/blank excel cells as-is, overwrite differing fields
+          let changed = false;
+
+          CLIENT_FIELDS.forEach(field => {
+            const incomingVal = String(record[field] == null ? "" : record[field]).trim();
+            // If Excel cell is blank/empty, preserve existing CRM data intact ("keep it as it is")
+            if (incomingVal !== "") {
+              const currentVal = String(existing[field] == null ? "" : existing[field]).trim();
+              if (incomingVal !== currentVal) {
+                existing[field] = incomingVal;
+                changed = true;
+              }
+            }
+          });
+
+          const incomingWastage = parseWastageCell(record.wastage);
+          if (Object.keys(incomingWastage).length > 0) {
+            existing.wastage = existing.wastage || {};
+            Object.keys(incomingWastage).forEach(category => {
+              const val = String(incomingWastage[category] == null ? "" : incomingWastage[category]).trim();
+              if (val !== "") {
+                const currentWastage = String(existing.wastage[category] == null ? "" : existing.wastage[category]).trim();
+                if (val !== currentWastage) {
+                  existing.wastage[category] = val;
+                  changed = true;
+                }
+              }
+            });
+          }
+
+          if (changed) {
+            updated += 1;
+            indexClient(existing, true);
+            if (s.voucherClients && Array.isArray(s.voucherClients.items)) {
+              const vMatch = mapVoucher.get(existing.company) || mapVoucher.get(normStr(existing.company));
+              if (vMatch && record.city) vMatch.city = existing.city;
+            }
+          } else {
+            unchanged += 1;
+          }
+        } else {
+          const newRecord = {};
+          CLIENT_FIELDS.forEach(field => {
+            newRecord[field] = String(record[field] == null ? "" : record[field]).trim();
+          });
+          newRecord.wastage = parseWastageCell(record.wastage);
+          newRecord.photos = [];
+          // Preserve incoming alphanumeric or explicit ID; otherwise assign auto-increment nextId
+          const incomingId = String(record.id == null ? "" : record.id).trim();
+          if (incomingId !== "") {
+            newRecord.id = incomingId;
+            const numId = Number(incomingId);
+            if (!isNaN(numId) && numId >= s.clients.nextId) {
+              s.clients.nextId = Math.floor(numId) + 1;
+            }
+          } else {
+            newRecord.id = s.clients.nextId++;
+          }
+          const d = new Date(), p = n => String(n).padStart(2, "0");
+          newRecord.created = `${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}`;
+          s.clients.items.push(newRecord);
+
+          // Dynamically update all 5 lookup Maps so subsequent rows in same spreadsheet match
+          indexClient(newRecord, false);
+
+          if (s.voucherClients && Array.isArray(s.voucherClients.items)) {
+            const compNorm = normStr(newRecord.company);
+            const hasVoucher = mapVoucher.has(newRecord.company) || (compNorm && mapVoucher.has(compNorm));
+            if (!hasVoucher) {
+              const newVc = { id: s.voucherClients.nextId++, name: newRecord.company, city: newRecord.city || "" };
+              s.voucherClients.items.push(newVc);
+              mapVoucher.set(newRecord.company, newVc);
+              if (compNorm) mapVoucher.set(compNorm, newVc);
+            }
+          }
+          added += 1;
+        }
+      }
+
+      // Micro-delay yield to UI event loop & live progress update at chunk boundary
+      updateProgress(chunkEnd);
+      await new Promise(r => setTimeout(r, 0));
+    }
+  } finally {
+    if (progressOverlay && progressOverlay.parentNode) {
+      progressOverlay.parentNode.removeChild(progressOverlay);
+    }
+  }
+
+  const quota = await dbSave();
+  if (quota) return { ok: false, error: quota };
+  const payload = { ok: true, added, updated, unchanged, clients: s.clients.items, voucherClients: s.voucherClients.items };
+  if (typeof absorb === "function") absorb(payload);
+  return payload;
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = () => reject(new Error("File read error.")); reader.readAsDataURL(file); });
+}
+
+/* ============================================================ stickers */
+$("btnStickers").addEventListener("click", async () => {
+  const ids = checkedClientIds(); if (!ids.length) return say("STICKER", "Check boxes to print.");
+  const slot = await modal((box, close) => {
+    let html = '<h3>STARTING SLOT (2x6)</h3><div class="slots">'; for (let i = 1; i <= 12; i++) html += `<button class="btn ghost" data-slot="${i}">SLOT ${i}</button>`;
+    html += '</div><div class="row"><button class="btn ghost" data-cancel>CANCEL</button></div>'; box.innerHTML = html;
+    box.querySelectorAll("[data-slot]").forEach(button => { button.onclick = () => close(Number(button.getAttribute("data-slot"))); });
+    box.querySelector("[data-cancel]").onclick = () => close(null);
+  });
+  if (!slot) return; printStickers(ids, slot);
+});
+
+function printStickers(ids, start) {
+  const clients = ids.map(id => S.clients.find(c => String(c.id).trim() === String(id).trim())).filter(Boolean);
+  let body = "";
+  for (let i = 0; i < start - 1; i++) {
+    body += "<div class='empty'></div>";
+  }
+  clients.forEach(c => {
+    const phones = [c.phone, c.phone2, c.phone3].map(p => String(p || "").trim()).filter(Boolean);
+    const phoneStr = phones.length ? phones.join(" / ") : "";
+    const cityStatePin = [c.city, c.state].map(s => String(s || "").trim()).filter(Boolean).join(", ");
+    const locationLine = cityStatePin ? (c.pincode ? `${cityStatePin} - ${c.pincode}` : cityStatePin) : String(c.pincode || "").trim();
+
+    body += `<div class='label'>
+      <div class='to'>TO,</div>
+      <div class='company'>${esc(c.company)}</div>
+      <div class='details'>
+        ${esc(c.address)}<br>
+        ${esc(locationLine)}
+        ${phoneStr ? `<br>CONTACT: ${esc(phoneStr)}` : ''}
+      </div>
+    </div>`;
+  });
+
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Palak Stickers</title><style>
+    @page { size: A4 portrait; margin: 0; }
+    html, body { width: 210mm; height: 297mm; margin: 0; padding: 0; background: #fff; }
+    body { display: grid; grid-template-columns: 105mm 105mm; grid-template-rows: repeat(6, 49.5mm); box-sizing: border-box; }
+    .label { width: 105mm; height: 49.5mm; padding: 4mm 5mm; box-sizing: border-box; font-family: Arial, sans-serif; overflow: hidden; display: flex; flex-direction: column; justify-content: center; word-break: break-word; }
+    .empty { width: 105mm; height: 49.5mm; box-sizing: border-box; }
+    .to { font-size: 10px; font-weight: bold; color: #444; margin-bottom: 1px; }
+    .company { font-size: 13px; font-weight: bold; line-height: 1.15; text-transform: uppercase; margin-bottom: 2px; color: #000; max-height: 16mm; overflow: hidden; word-break: break-word; }
+    .details { font-size: 11px; font-weight: 600; line-height: 1.2; text-transform: uppercase; color: #111; max-height: 25mm; overflow: hidden; word-break: break-word; }
+  </style></head><body>${body}
+<script>
+  /* PWA Service Worker Registration & Persistent Storage */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+      navigator.serviceWorker.register("./sw.js").then(function(reg) {
+        console.log("[PWA] Service Worker registered with scope:", reg.scope);
+      }).catch(function(err) {
+        console.warn("[PWA] Service Worker registration failed:", err);
+      });
+    });
+  }
+
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().then(function(persistent) {
+      console.log("[PWA] Storage persistence granted:", persistent);
+    });
+  }
+</script>
+
+</body></html>`;
+
+  openPrintWindow(html, "Could not open sticker sheet.");
+}
+
+function openPrintWindow(html, failureMessage) {
+  if (window.Android && window.Android.printHtml) {
+    window.Android.printHtml(html, "PalakCRM_Print");
+    return true;
+  }
+  let iframe = document.getElementById("printFrame");
+  if (!iframe) { iframe = document.createElement("iframe"); iframe.id = "printFrame"; iframe.style.position = "fixed"; iframe.style.right = "0"; iframe.style.bottom = "0"; iframe.style.width = "0"; iframe.style.height = "0"; iframe.style.border = "0"; document.body.appendChild(iframe); }
+  iframe.contentWindow.document.open(); iframe.contentWindow.document.write(html); iframe.contentWindow.document.close();
+  setTimeout(() => { iframe.contentWindow.focus(); iframe.contentWindow.print(); }, 500); return true;
+}
+
+/* ============================================================ client form */
+const form = { id: null, photos: [], photoStore: new Map(), photoSeq: 0, wastage: {}, entries: {}, undo: [], redo: [], restoring: false, baseline: "" };
+
+function trackPhoto(photo) { photo.uid = `p${++form.photoSeq}`; form.photoStore.set(photo.uid, photo); return photo; }
+function buildFieldGrid() {
+  const parts = [];
+  FIELD_LAYOUT.forEach(pair => {
+    pair.forEach(raw => {
+      if (!raw) return;
+      const key = raw.replace("*", "");
+      const label = raw.toUpperCase().replace(/_/g, " ");
+      if (key === "address") {
+        parts.push(`<div class="field${raw.includes("*") ? " req" : ""}" style="grid-column: 1 / -1; align-items: start;"><label for="f_${key}" style="padding-top: 8px;">${esc(label)}</label><textarea id="f_${key}" data-field="${key}" autocomplete="off" rows="3" style="min-height: 75px; font-weight: 600; font-family: inherit; padding: 8px 10px; line-height: 1.35; resize: vertical; color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 6px;"></textarea></div>`);
+      } else {
+        parts.push(`<div class="field${raw.includes("*") ? " req" : ""}"><label for="f_${key}">${esc(label)}</label><input id="f_${key}" data-field="${key}" autocomplete="off"></div>`);
+      }
+    });
+  });
+  $("fieldGrid").innerHTML = parts.join("");
+  form.entries = {};
+  CLIENT_FIELDS.forEach(key => { form.entries[key] = $("f_" + key); });
+  wireFormBehaviour();
+}
+function wireFormBehaviour() { AUTOCOMPLETE_FIELDS.forEach(key => attachAutocomplete(form.entries[key], key)); ["pincode", "phone", "phone2", "phone3"].forEach(key => attachNumberFilter(form.entries[key], 15)); Object.values(form.entries).forEach(input => { input.addEventListener("blur", captureState); }); }
+function attachNumberFilter(input, maxLen = 15) {
+  if (!input) return;
+  input.setAttribute("inputmode", "numeric");
+  input.setAttribute("maxlength", String(maxLen));
+  input.addEventListener("beforeinput", event => {
+    if (!event.data) return;
+    if (/[^0-9]/.test(event.data)) { event.preventDefault(); return; }
+    if (!(input.selectionEnd > input.selectionStart) && input.value.length >= maxLen) {
+      event.preventDefault();
+    }
+  });
+  input.addEventListener("input", () => {
+    const clean = input.value.replace(/\D/g, "").slice(0, maxLen);
+    if (input.value !== clean) {
+      input.value = clean;
+    }
+  });
+}
+
+const suggestCache = { stamp: -1, byField: new Map() };
+function suggestionsFor(key) {
+  if (suggestCache.stamp !== clientsStamp) { suggestCache.stamp = clientsStamp; suggestCache.byField.clear(); }
+  let list = suggestCache.byField.get(key);
+  if (!list) { const seen = new Set(); S.clients.forEach(client => { const value = String(client[key] || "").trim(); if (value) seen.add(value); }); list = Array.from(seen).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())); suggestCache.byField.set(key, list); }
+  return list;
+}
+function attachAutocomplete(input, key) {
+  if (!input) return;
+  input.addEventListener("input", event => {
+    if (event.inputType && event.inputType.startsWith("delete")) return;
+    const typed = input.value; if (!typed) return; const lower = typed.toLowerCase(); const hit = suggestionsFor(key).find(v => v.toLowerCase().startsWith(lower) && v.toLowerCase() !== lower);
+    if (!hit) return; input.value = hit; input.setSelectionRange(typed.length, hit.length);
+  });
+  input.addEventListener("keydown", event => { if ((event.key === "Tab" || event.key === "Enter" || event.key === "ArrowRight") && input.selectionEnd > input.selectionStart) { input.setSelectionRange(input.value.length, input.value.length); if (event.key !== "Tab") event.preventDefault(); } });
+}
+
+function formSnapshot() { const fields = {}; CLIENT_FIELDS.forEach(key => { fields[key] = form.entries[key].value; }); return JSON.stringify({ fields, photos: form.photos.map(p => p.uid), wastage: form.wastage }); }
+function captureState() { if (form.restoring) return; const snapshot = formSnapshot(); if (form.undo.length && form.undo[form.undo.length - 1] === snapshot) return; form.undo.push(snapshot); if (form.undo.length > 100) form.undo.shift(); form.redo.length = 0; }
+function restoreState(snapshot) { const data = JSON.parse(snapshot); form.restoring = true; CLIENT_FIELDS.forEach(key => { form.entries[key].value = data.fields[key] || ""; }); form.photos = (data.photos || []).map(uid => form.photoStore.get(uid)).filter(Boolean); form.wastage = data.wastage || {}; renderPhotos(); form.restoring = false; }
+function undoForm() { captureState(); if (form.undo.length < 2) return; form.redo.push(form.undo.pop()); restoreState(form.undo[form.undo.length - 1]); }
+function redoForm() { if (!form.redo.length) return; const snapshot = form.redo.pop(); form.undo.push(snapshot); restoreState(snapshot); }
+
+function openClientForm(client) {
+  form.id = client ? client.id : null; form.photoStore = new Map(); form.photos = client ? (client.photos || []).map(path => trackPhoto({ kind: "existing", path })) : []; form.wastage = client && client.wastage ? JSON.parse(JSON.stringify(client.wastage)) : {}; form.undo = []; form.redo = []; form.restoring = false;
+  CLIENT_FIELDS.forEach(key => { form.entries[key].value = client ? String(client[key] || "") : ""; });
+  $("clientTitle").textContent = client ? "CLIENT DETAILS" : "ADD CLIENT";
+  if($("clientClock")) $("clientClock").textContent = stamp();
+  renderPhotos(); closeWastageScreen(); show("client"); captureState(); form.baseline = formSnapshot();
+}
+$("clientBack").addEventListener("click", async () => { if (formSnapshot() !== form.baseline && !await ask("DISCARD", "Discard unsaved changes?", "DISCARD")) return; openDashboard(); });
+$("saveClient").addEventListener("click", saveClient);
+
+async function saveClient() {
+  if (!$("clientWastage").hidden) form.wastage = collectWastageFromGrid();
+  const fields = {}; CLIENT_FIELDS.forEach(key => { fields[key] = form.entries[key].value; });
+  if (MANDATORY.some(key => !fields[key].trim())) return say("ERROR", "Fill mandatory fields marked with *");
+  const numError = digitProblem(fields.pincode, "Pincode", 15) ||
+                   digitProblem(fields.phone, "Phone", 15) ||
+                   digitProblem(fields.phone2, "Phone 2", 15) ||
+                   digitProblem(fields.phone3, "Phone 3", 15);
+  if (numError) return say("INVALID INPUT", numError);
+  const email = fields.email.trim(); if (email && (!email.includes("@") || !email.includes("."))) return say("INVALID EMAIL", "Email must contain @ and .");
+  if (!await ask("CONFIRM", "Save this client?", "SAVE")) return;
+  const payload = await api("/api/clients", { json: { id: form.id, fields, wastage: form.wastage, photos: form.photos } });
+  if (!payload.ok) return say("ERROR", payload.error || "Save failed."); absorb(payload); form.baseline = formSnapshot(); await say("SUCCESS", "Client Saved"); openDashboard();
+}
+function digitProblem(value, label, maxLen = 15) { const v = String(value || "").trim(); if (!v) return null; if (!/^[0-9]+$/.test(v)) return `${label} must contain numbers only.`; if (v.length > maxLen) return `${label} max ${maxLen} digits.`; return null; }
+
+/* ---------------------------------------------------------- photos */
+$("addPhoto").addEventListener("click", () => { if (form.photos.length >= MAX_CLIENT_PHOTOS) return say("LIMIT", "Max 5 photos."); $("photoInput").click(); });
+$("photoInput").addEventListener("change", async event => {
+  const file = event.target.files[0]; event.target.value = ""; if (!file) return;
+  const ext = (file.name.match(/\.[^.]+$/) || [""])[0].toLowerCase();
+  if (![".jpg", ".jpeg", ".png"].includes(ext)) return say("INVALID FILE", "Only JPG/PNG allowed.");
+  if (file.size > MAX_PHOTO_SIZE_MB * 1024 * 1024) return say("FILE TOO LARGE", "Max 5 MB.");
+  if (form.photos.some(p => p.kind === "new" && p.name === file.name && p.size === file.size)) return say("DUPLICATE", "Already added.");
+  const data = await readFileAsDataUrl(file);
+  if (!/^data:image\/(jpeg|png);/i.test(data)) return say("INVALID", "Not a valid image.");
+  form.photos.push(trackPhoto({ kind: "new", name: file.name, size: file.size, data })); renderPhotos(); captureState();
+});
+function photoSrc(photo) { return photo.kind === "new" ? photo.data : (photo.path.startsWith("data:") ? photo.path : ""); }
+function photoLabel(photo) { return photo.kind === "new" ? photo.name : "document"; }
+function renderPhotos() {
+  const row = $("photoRow"); row.textContent = "";
+  if (!form.photos.length) { const note = document.createElement("span"); note.style.cssText = "color:var(--muted);font-size:12px"; note.textContent = "No documents attached."; row.appendChild(note); return; }
+  form.photos.forEach((photo, index) => {
+    const card = document.createElement("div"); card.className = "photo-card";
+    const image = document.createElement("img"); image.src = photoSrc(photo); image.alt = photoLabel(photo); image.setAttribute("data-view", index);
+    image.addEventListener("error", () => { const fallback = document.createElement("div"); fallback.className = "name"; fallback.setAttribute("data-view", index); fallback.textContent = photoLabel(photo).slice(0, 18); image.replaceWith(fallback); });
+    const remove = document.createElement("button"); remove.setAttribute("data-drop", index); remove.innerHTML = "&#10060;";
+    card.append(image, remove); row.appendChild(card);
+  });
+}
+$("photoRow").addEventListener("click", event => { const drop = event.target.closest("[data-drop]"); if (drop) { form.photos.splice(Number(drop.getAttribute("data-drop")), 1); renderPhotos(); captureState(); return; } const view = event.target.closest("[data-view]"); if (view) openPhotoViewer(Number(view.getAttribute("data-view"))); });
+
+let viewerKeys = null;
+function openPhotoViewer(startIndex) {
+  if (!form.photos.length) return; let index = Math.max(0, Math.min(startIndex, form.photos.length - 1));
+  modal((box, close) => {
+    box.classList.add("viewer"); box.innerHTML = `<h3>Photo Viewer</h3><img id="viewerImg" alt=""><div class="bar"><button class="btn ghost" data-prev>PREV</button><span class="count" id="viewerCount"></span><button class="btn ghost" data-next>NEXT</button><button class="btn red" data-close>CLOSE</button></div>`;
+    const image = box.querySelector("#viewerImg"), count = box.querySelector("#viewerCount");
+    const draw = () => { image.src = photoSrc(form.photos[index]); count.textContent = `${index + 1} / ${form.photos.length}`; };
+    const step = delta => { index = (index + delta + form.photos.length) % form.photos.length; draw(); };
+    box.querySelector("[data-prev]").onclick = () => step(-1); box.querySelector("[data-next]").onclick = () => step(1); box.querySelector("[data-close]").onclick = () => close(null);
+    viewerKeys = event => { if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); } if (event.key === "ArrowRight") { event.preventDefault(); step(1); } }; document.addEventListener("keydown", viewerKeys); draw();
+  }).then(() => { document.removeEventListener("keydown", viewerKeys); viewerKeys = null; });
+}
+
+/* ---------------------------------------------------------- wastage screen */
+$("openWastage").addEventListener("click", () => { $("clientFields").hidden = true; $("clientActions").hidden = true; renderWastageGrid(); $("clientWastage").hidden = false; $("wastageActions").hidden = false; });
+function harvestWastageEntries() { $("wastageGrid").querySelectorAll("input[data-cat]").forEach(input => { const value = input.value.trim(); if (value) form.wastage[input.getAttribute("data-cat")] = value; }); }
+function closeWastageScreen() { $("clientWastage").hidden = true; $("wastageActions").hidden = true; $("clientFields").hidden = false; $("clientActions").hidden = false; }
+function collectWastageFromGrid() { const next = {}; $("wastageGrid").querySelectorAll("input[data-cat]").forEach(input => { const value = input.value.trim(); if (value) next[input.getAttribute("data-cat")] = value; }); return next; }
+$("closeWastage").addEventListener("click", () => { form.wastage = collectWastageFromGrid(); closeWastageScreen(); captureState(); });
+function renderWastageGrid() { $("wastageGrid").innerHTML = S.wastageCategories.map(cat => `<div class="wastage-cell"><label>${esc(cat)}</label><input data-cat="${esc(cat)}" value="${esc(form.wastage[cat] || "")}" autocomplete="off"></div>`).join(""); $("delCategory").innerHTML = S.wastageCategories.map(c => `<option>${esc(c)}</option>`).join(""); }
+$("addCategory").addEventListener("click", async () => { const name = $("newCategory").value.trim().toUpperCase(); if (!name) return; harvestWastageEntries(); const payload = await api("/api/wastage-categories", { json: { action: "add", name } }); if (!payload.ok) return say("ERROR", payload.error); absorb(payload); $("newCategory").value = ""; renderWastageGrid(); captureState(); });
+$("deleteCategory").addEventListener("click", async () => { const name = $("delCategory").value; if (!name) return; if (!await ask("DELETE", `Remove '${name}'?`, "REMOVE")) return; harvestWastageEntries(); const payload = await api("/api/wastage-categories", { json: { action: "delete", name } }); if (!payload.ok) return say("ERROR", payload.error); absorb(payload); renderWastageGrid(); captureState(); });
+
+/* ============================================================ accounts */
+let selectedUserId = null;
+async function openAccounts() { const payload = await api("/api/users"); if (!payload.ok) return say("DENIED", payload.error); absorb(payload); selectedUserId = null; clearAccountEditor(); renderUsers(); show("accounts"); }
+function renderUsers() {
+  const parts = S.users.map((user, index) => `<tr class="${index % 2 === 0 ? "evenrow" : "oddrow"}${user.id === selectedUserId ? " sel" : ""}" data-user="${user.id}"><td>${user.id}</td><td>${esc(user.username)}</td><td>&bull;&bull;&bull;</td><td>${esc(user.role)}</td><td>${(user.strikes >= 4 && user.role !== "superadmin") ? "LOCKED" : "ACTIVE"}</td></tr>`);
+  for (let i = S.users.length; i < 15; i++) parts.push(`<tr class="${i % 2 === 0 ? "evenrow" : "oddrow"} empty"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>`);
+  $("userRows").innerHTML = parts.join("");
+}
+$("userRows").addEventListener("click", event => { const row = event.target.closest("tr[data-user]"); if (!row) return; const user = S.users.find(u => u.id === Number(row.getAttribute("data-user"))); if (!user) return; selectedUserId = user.id; $("accUser").value = user.username; $("accPass").value = ""; $("accPass").placeholder = "Leave blank to keep current"; $("accRole").value = user.role; renderUsers(); });
+function clearAccountEditor() { selectedUserId = null; $("accUser").value = ""; $("accPass").value = ""; $("accPass").placeholder = "Password"; $("accRole").value = "staff"; renderUsers(); }
+$("accClear").addEventListener("click", clearAccountEditor);
+$("accSave").addEventListener("click", async () => { if (!$("accUser").value.trim() || (!selectedUserId && !$("accPass").value.trim())) return; const payload = await api("/api/users", { json: { id: selectedUserId, username: $("accUser").value, password: $("accPass").value, role: $("accRole").value } }); if (!payload.ok && !payload.silent) return say(payload.title || "ERROR", payload.message || payload.error); if(payload.ok) absorb(payload); clearAccountEditor(); });
+$("accDelete").addEventListener("click", async () => { if (!selectedUserId) return; const payload = await api("/api/users/delete", { json: { id: selectedUserId } }); if (!payload.ok && !payload.silent) return say(payload.title || "ERROR", payload.message || payload.error); if(payload.ok) absorb(payload); clearAccountEditor(); });
+
+/* ============================================================ dropdown */
+const dropdown = { el: $("dropdown"), values: [], index: 0, owner: null, onPick: null, byF2: false };
+function dropdownOpen() { return !dropdown.el.hidden; }
+function showDropdown(owner, values, onPick, byF2) {
+  const sorted = values.slice().sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  if (!sorted.length) { hideDropdown(); return false; }
+  dropdown.values = sorted; dropdown.index = 0; dropdown.owner = owner; dropdown.onPick = onPick; dropdown.byF2 = !!byF2; paintDropdown();
+  const box = owner.getBoundingClientRect(); dropdown.el.hidden = false; dropdown.el.style.left = `${Math.min(box.left, window.innerWidth - 280)}px`; dropdown.el.style.top = `${box.bottom + 2}px`; dropdown.el.style.minWidth = `${Math.max(box.width, 260)}px`; return true;
+}
+function paintDropdown() { dropdown.el.innerHTML = dropdown.values.map((val, i) => `<div class="${i === dropdown.index ? "on" : ""}" data-pick="${i}">${esc(val)}</div>`).join(""); const active = dropdown.el.querySelector(".on"); if (active) active.scrollIntoView({ block: "nearest" }); }
+function hideDropdown() { dropdown.el.hidden = true; dropdown.byF2 = false; dropdown.owner = null; }
+function moveDropdown(delta) { if (!dropdownOpen()) return; dropdown.index = Math.max(0, Math.min(dropdown.values.length - 1, dropdown.index + delta)); paintDropdown(); }
+dropdown.el.addEventListener("mousedown", event => { const pick = event.target.closest("[data-pick]"); if (!pick) return; event.preventDefault(); const val = dropdown.values[Number(pick.getAttribute("data-pick"))], handler = dropdown.onPick; hideDropdown(); if (handler) handler(val); });
+document.addEventListener("mousedown", event => { if (dropdownOpen() && !dropdown.el.contains(event.target) && event.target !== dropdown.owner) hideDropdown(); });
+document.addEventListener("focusin", event => { if (dropdownOpen() && !dropdown.el.contains(event.target) && event.target !== dropdown.owner) hideDropdown(); });
+
+/* ============================================================ issue voucher */
+const voucher = { rows: [], cells: [], indicators: [], totals: {}, activeRow: null, timer: null, justApplied: new Set() };
+function blankRow() { return { code: "", item: "", pcs: "", gross: "", less: "", net: "", melting: "", wastage: "", fine: "", amount: "", gst: DEFAULT_GST, hall_gst: "" }; }
+function buildVoucherGrid() {
+  $("vHead").innerHTML = `<th style="width:38px">Sr</th>` + VOUCHER_COLUMNS.map(col => `<th style="width:${col.width}px">${esc(col.label)}</th>`).join("");
+  const body = [];
+  for (let r = 0; r < ROW_COUNT; r++) {
+    const cells = VOUCHER_COLUMNS.map((col, c) => {
+      const textCell = col.key === "code" || col.key === "item", attrs = `data-row="${r}" data-col="${c}" class="${textCell ? "text-cell" : ""}"${col.readonly ? " readonly tabindex=\"0\"" : ""}`;
+      if (col.key === "wastage") return `<td><div class="wcell"><input ${attrs}><span class="dot" data-dot="${r}">*</span></div></td>`;
+      return `<td><input ${attrs}></td>`;
+    }).join(""); body.push(`<tr><td class="sr">${r + 1}</td>${cells}</tr>`);
+  } $("vBody").innerHTML = body.join("");
+  voucher.cells = []; voucher.indicators = [];
+  for (let r = 0; r < ROW_COUNT; r++) { voucher.cells.push(VOUCHER_COLUMNS.map((col, c) => $("vBody").querySelector(`input[data-row="${r}"][data-col="${c}"]`))); voucher.indicators.push($("vBody").querySelector(`[data-dot="${r}"]`)); }
+  $("vTotals").innerHTML = `<td class="sr">TOTAL</td>` + VOUCHER_COLUMNS.map(col => TOTAL_COLUMNS.includes(col.key) ? `<td><input data-total="${col.key}" readonly></td>` : "<td></td>").join("");
+  voucher.totals = {}; TOTAL_COLUMNS.forEach(key => { voucher.totals[key] = $("vTotals").querySelector(`[data-total="${key}"]`); }); wireVoucherGrid();
+}
+function wireVoucherGrid() {
+  $("vBody").addEventListener("focusin", event => { const input = event.target.closest("input[data-row]"); if (!input) return; const row = Number(input.getAttribute("data-row")); voucher.activeRow = row; if (VOUCHER_COLUMNS[Number(input.getAttribute("data-col"))].key === "code") voucher.justApplied.delete(row); });
+  $("vBody").addEventListener("input", event => {
+    const input = event.target.closest("input[data-row]"); if (!input) return;
+    const r = Number(input.getAttribute("data-row")), c = Number(input.getAttribute("data-col")), key = VOUCHER_COLUMNS[c].key; voucher.rows[r][key] = input.value;
+    if (key === "code") { const matches = filterValues(S.voucherCodes, input.value); if (!showDropdown(input, matches, value => pickCode(r, value))) hideDropdown(); return; }
+    if (key === "wastage") setIndicator(r, false); if (RECALC_KEYS.includes(key)) scheduleCalculate();
+  });
+  $("vBody").addEventListener("focusout", event => {
+    const input = event.target.closest("input[data-row]"); if (!input) return;
+    if (VOUCHER_COLUMNS[Number(input.getAttribute("data-col"))].key !== "code") return;
+    const r = Number(input.getAttribute("data-row"));
+    setTimeout(() => { if (dropdownOpen() || voucher.justApplied.delete(r)) return; const typed = voucher.rows[r].code.trim(); if (typed) applyCode(r, typed); }, 120);
+  });
+  $("vBody").addEventListener("keydown", event => { const input = event.target.closest("input[data-row]"); if (input) handleGridKey(event, input); });
+
+  // ANDROID TAP LISTENER (Replaces F2 for opening dropdowns)
+  $("vBody").addEventListener("click", event => {
+    const input = event.target.closest("input[data-row]"); if (!input) return;
+    const c = Number(input.getAttribute("data-col")); const r = Number(input.getAttribute("data-row"));
+    if (c === 0 && !dropdownOpen()) showDropdown(input, S.voucherCodes, value => pickCode(r, value), true);
+  });
+}
+function filterValues(values, needle) { const search = String(needle || "").trim().toLowerCase(); return values.filter(value => !search || value.toLowerCase().includes(search)); }
+function setIndicator(r, saved) { const dot = voucher.indicators[r]; if (dot) dot.classList.toggle("saved", !!saved); }
+function setCell(r, key, value) { const col = VOUCHER_COLUMNS.findIndex(c => c.key === key); voucher.rows[r][key] = value; if (col >= 0) voucher.cells[r][col].value = value; }
+function voucherClientNames() { return S.voucherClients.map(c => `${c.name}${c.city ? " " + c.city : ""}`.trim()); }
+function resolveVoucherClientId(nameCity) { const wanted = String(nameCity || "").trim(); if (!wanted) return null; const exact = S.voucherClients.find(c => `${c.name}${c.city ? " " + c.city : ""}`.trim() === wanted); if (exact) return exact.id; const cut = wanted.lastIndexOf(" "); if (cut > 0) { const name = wanted.slice(0, cut), city = wanted.slice(cut + 1); const split = S.voucherClients.find(c => c.name === name && c.city === city); if (split) return split.id; } return null; }
+function savedWastageFor(clientId, code) { if (!clientId) return null; const value = S.clientCodeWastage[`${clientId}|${code}`]; return value === undefined ? null : value; }
+async function applyCode(r, rawCode) {
+  const code = String(rawCode || "").trim().toUpperCase(); if (!code) return;
+  if (!S.voucherCodes.includes(code)) { const payload = await api("/api/voucher-codes", { json: { code } }); if (payload.ok) absorb(payload); }
+  voucher.justApplied.add(r); setCell(r, "code", code); setCell(r, "item", code); setCell(r, "gst", DEFAULT_GST);
+  const clientId = resolveVoucherClientId($("vClient").value), saved = savedWastageFor(clientId, code);
+  if (saved !== null) { setCell(r, "wastage", String(saved)); setIndicator(r, true); } else { setCell(r, "wastage", ""); setIndicator(r, false); }
+  scheduleCalculate();
+}
+function pickCode(r, value) { hideDropdown(); applyCode(r, value).then(() => focusCell(r, 1)); }
+function applyClientSavedWastage() { const clientId = resolveVoucherClientId($("vClient").value); if (!clientId) return; voucher.rows.forEach((row, r) => { const code = row.code.trim(); if (!code) return; const saved = savedWastageFor(clientId, code); if (saved !== null) { setCell(r, "wastage", String(saved)); setIndicator(r, true); } else setIndicator(r, false); }); scheduleCalculate(); }
+
+function handleGridKey(event, input) {
+  const r = Number(input.getAttribute("data-row")), c = Number(input.getAttribute("data-col")), key = event.key;
+  if (key === "F2" && c === 0) { event.preventDefault(); if (dropdownOpen() && dropdown.byF2) { hideDropdown(); return addCodePopup(r); } if (!showDropdown(input, S.voucherCodes, value => pickCode(r, value), true)) return addCodePopup(r); return; }
+  if (key === "Escape") { hideDropdown(); return; }
+  let action = null;
+  if (key === "Enter" || key === "Tab") action = event.shiftKey && key === "Tab" ? "left" : "return";
+  else if (key === "ArrowRight") action = "right"; else if (key === "ArrowLeft") action = "left"; else if (key === "ArrowUp") action = "up"; else if (key === "ArrowDown") action = "down";
+  if (!action) return;
+  if (c === 1 && (action === "left" || action === "right")) return;
+  if (c === 1 && action === "down") { event.preventDefault(); input.setSelectionRange(input.value.length, input.value.length); return; }
+  if (c === 0 && dropdownOpen()) { if (action === "down") { event.preventDefault(); moveDropdown(1); return; } if (action === "up") { event.preventDefault(); moveDropdown(-1); return; } if (action === "return") { event.preventDefault(); const value = dropdown.values[dropdown.index]; hideDropdown(); if (value) applyCode(r, value).then(() => focusCell(r, 1)); else { applyCode(r, voucher.rows[r].code); focusCell(r, 1); } return; } }
+  if (c === 0 && action === "return") { event.preventDefault(); hideDropdown(); applyCode(r, voucher.rows[r].code).then(() => focusCell(r, 1)); return; }
+  event.preventDefault();
+  if (action === "return" || action === "right") focusCell(r, c + 1); else if (action === "left") focusCell(r, c - 1); else if (action === "up") focusCell(r - 1, c); else if (action === "down") focusCell(r + 1, c);
+}
+function focusCell(r, c) {
+  if (r < 0) { $("vClient").focus(); $("vClient").select(); return; }
+  if (r >= ROW_COUNT) { $("vGold").focus(); $("vGold").select(); return; }
+  while (r < ROW_COUNT) { if (c < 0) { r -= 1; if (r < 0) { $("vClient").focus(); $("vClient").select(); return; } c = VOUCHER_COLUMNS.length - 1; continue; } if (c >= VOUCHER_COLUMNS.length) { r += 1; c = 0; continue; } break; }
+  if (r >= ROW_COUNT) { $("vGold").focus(); $("vGold").select(); return; }
+  const input = voucher.cells[r][c]; input.focus(); if (c === 1) input.setSelectionRange(input.value.length, input.value.length); else input.select();
+}
+function scheduleCalculate() { clearTimeout(voucher.timer); voucher.timer = setTimeout(calculateAll, 80); }
+function calculateAll() {
+  voucher.rows.forEach((row, r) => {
+    const gross = pyFloat(row.gross), gstPercent = pyFloat(row.gst), extraAmount = pyFloat(row.amount);
+    setCell(r, "hall_gst", extraAmount ? pyFormat(extraAmount * (gstPercent / 100.0), 2) : "");
+    if (gross === 0) { setCell(r, "net", ""); setCell(r, "fine", ""); return; }
+    const net = gross - pyFloat(row.less); setCell(r, "net", pyFormat(net, 3));
+    setCell(r, "fine", pyFormat(net * ((pyFloat(row.melting) + pyFloat(row.wastage)) / 100.0), 3));
+  });
+  updateTotalsRow(); calculateFooterTotals();
+}
+function updateTotalsRow() {
+  let pcs = 0, gross = 0, less = 0, net = 0, fine = 0, amount = 0, hallGst = 0;
+  voucher.rows.forEach(row => { const p = pyFloat(row.pcs); pcs += p ? Math.trunc(p) : 0; gross += pyFloat(row.gross); less += pyFloat(row.less); net += pyFloat(row.net); fine += pyFloat(row.fine); amount += pyFloat(row.amount); hallGst += pyFloat(row.hall_gst); });
+  voucher.totals.pcs.value = pcs ? String(pcs) : ""; voucher.totals.gross.value = gross ? pyFormat(gross, 3) : ""; voucher.totals.less.value = less ? pyFormat(less, 3) : ""; voucher.totals.net.value = net ? pyFormat(net, 3) : ""; voucher.totals.fine.value = fine ? pyFormat(fine, 3) : ""; voucher.totals.amount.value = amount ? pyFormat(amount, 2) : ""; voucher.totals.hall_gst.value = hallGst ? pyFormat(hallGst, 2) : "";
+}
+const DEC_ZERO = { v: 0n, s: 0 }, DEC_ONE = { v: 1n, s: 0 }, DEC_HUNDRED = { v: 100n, s: 0 }, DEC_9_95 = { v: 995n, s: 2 };
+function calculateFooterTotals() {
+  let tStone = DEC_ZERO, tHallGst = DEC_ZERO, tFineAmt = DEC_ZERO, tFineGst = DEC_ZERO;
+  const goldRate = decParse($("vGold").value); let wtPer = decParse($("vWt").value); const fineGstApplies = decEquals(wtPer, DEC_9_95); if (decIsZero(wtPer)) wtPer = DEC_ONE;
+  voucher.rows.forEach(row => {
+    tStone = decAdd(tStone, decParse(row.amount)); tHallGst = decAdd(tHallGst, decParse(row.hall_gst));
+    const fineWt = decParse(row.fine); if (decIsZero(fineWt)) return;
+    const fineAmt = decDiv(decMul(fineWt, goldRate), wtPer); tFineAmt = decAdd(tFineAmt, fineAmt);
+    if (fineGstApplies) tFineGst = decAdd(tFineGst, decDiv(decMul(fineAmt, decParse(row.gst)), DEC_HUNDRED));
+  });
+  const dispFine = decRound(tFineAmt, 2, true), dispStone = decRound(tStone, 2, true), dispHallGst = decRound(tHallGst, 2, true), dispGst = fineGstApplies ? decRound(tFineGst, 2, true) : dispHallGst;
+  let net = decAdd(decAdd(dispFine, dispStone), dispGst); if (fineGstApplies) net = decAdd(net, dispHallGst);
+  $("vStone").value = decToFixed(dispStone, 2, true); $("vFine").value = decToFixed(dispFine, 2, true); $("vGst").value = decToFixed(dispGst, 2, true); $("vNet").value = decToFixed(net, 2, true);
+}
+
+async function openVoucher() { const payload = await api("/api/bootstrap"); if (payload.ok) absorb(payload); show("voucher"); clearVoucher(true); }
+function clearVoucher(skipRefresh) { hideDropdown(); clearTimeout(voucher.timer); voucher.rows = []; for (let r = 0; r < ROW_COUNT; r++) { voucher.rows.push(blankRow()); VOUCHER_COLUMNS.forEach((col, c) => { voucher.cells[r][c].value = col.key === "gst" ? DEFAULT_GST : ""; }); setIndicator(r, false); } TOTAL_COLUMNS.forEach(k => { voucher.totals[k].value = ""; }); $("vClient").value = ""; $("vGold").value = ""; $("vWt").value = ""; $("vNarration").value = ""; $("vDate").value = new Date().toLocaleDateString("en-GB"); $("vStone").value = "0.00"; $("vFine").value = "0.00"; $("vGst").value = "0.00"; $("vNet").value = "0.00"; $("vNumber").value = S.nextVoucherNo; if (!skipRefresh) { api("/api/bootstrap").then(payload => { if (payload.ok) { absorb(payload); $("vNumber").value = S.nextVoucherNo; } }); } }
+$("vClear").addEventListener("click", () => clearVoucher(false)); $("voucherBack").addEventListener("click", () => { hideDropdown(); openDashboard(); });
+$("vClient").addEventListener("input", () => { const matches = filterValues(voucherClientNames(), $("vClient").value); if (!showDropdown($("vClient"), matches, pickVoucherClient)) hideDropdown(); });
+function pickVoucherClient(value) { $("vClient").value = value; hideDropdown(); applyClientSavedWastage(); }
+$("vClient").addEventListener("keydown", event => { if (event.key === "F2") { event.preventDefault(); if (dropdownOpen() && dropdown.byF2) { hideDropdown(); return addVoucherClientPopup(); } if (!showDropdown($("vClient"), voucherClientNames(), pickVoucherClient, true)) return addVoucherClientPopup(); return; } if (event.key === "Escape") { hideDropdown(); return; } if (event.key === "ArrowDown") { event.preventDefault(); if (!dropdownOpen()) showDropdown($("vClient"), filterValues(voucherClientNames(), $("vClient").value), pickVoucherClient); moveDropdown(1); return; } if (event.key === "ArrowUp") { event.preventDefault(); moveDropdown(-1); return; } if (event.key === "Enter") { event.preventDefault(); if (dropdownOpen()) { const value = dropdown.values[dropdown.index]; hideDropdown(); if (value) { $("vClient").value = value; applyClientSavedWastage(); } } else applyClientSavedWastage(); $("vDate").focus(); $("vDate").select(); } });
+$("vDate").addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); focusCell(0, 0); } });
+$("vGold").addEventListener("input", scheduleCalculate); $("vWt").addEventListener("input", scheduleCalculate);
+$("vGold").addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); $("vWt").focus(); $("vWt").select(); } if (event.key === "ArrowUp") { event.preventDefault(); focusCell(ROW_COUNT - 1, 0); } });
+$("vWt").addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); $("vNarration").focus(); $("vNarration").select(); } if (event.key === "ArrowLeft" && $("vWt").selectionStart === 0) { event.preventDefault(); $("vGold").focus(); $("vGold").select(); } });
+$("vNarration").addEventListener("keydown", event => { if (event.key === "ArrowLeft" && $("vNarration").selectionStart === 0) { event.preventDefault(); $("vWt").focus(); $("vWt").select(); } if (event.key === "ArrowUp") { event.preventDefault(); focusCell(ROW_COUNT - 1, 0); } });
+
+function addVoucherClientPopup() { return modal((box, close) => { box.innerHTML = `<h3>Add Client</h3><label>Name:</label><input id="acName" autocomplete="off"><label>City:</label><input id="acCity" autocomplete="off"><div class="row"><button class="btn ghost" data-cancel>CANCEL</button><button class="btn" data-save>Save</button></div>`; const name = box.querySelector("#acName"), city = box.querySelector("#acCity"); const save = async () => { if (!name.value.trim() || !city.value.trim()) return say("Error", "Both fields required"); const payload = await api("/api/voucher-clients", { json: { name: name.value, city: city.value } }); if (!payload.ok) return say("Error", payload.error); absorb(payload); $("vClient").value = `${name.value.trim()} ${city.value.trim()}`; close(true); applyClientSavedWastage(); }; box.querySelector("[data-save]").onclick = save; box.querySelector("[data-cancel]").onclick = () => close(null); name.onkeydown = event => { if (event.key === "Enter") { event.preventDefault(); city.focus(); } }; city.onkeydown = event => { if (event.key === "Enter") { event.preventDefault(); save(); } }; setTimeout(() => name.focus(), 10); }); }
+function addCodePopup(rowIndex) { return modal((box, close) => { box.innerHTML = `<h3>Add Code</h3><label>Code Name:</label><input id="acCode" autocomplete="off"><div class="row"><button class="btn ghost" data-cancel>CANCEL</button><button class="btn" data-save>Save</button></div>`; const code = box.querySelector("#acCode"); if (rowIndex != null) code.value = voucher.rows[rowIndex].code; const save = async () => { const value = code.value.trim().toUpperCase(); if (!value) return say("Error", "Code required"); const payload = await api("/api/voucher-codes", { json: { code: value } }); if (payload.ok) absorb(payload); if (rowIndex == null) { if (payload.ok && !payload.added) return say("Error", "Code exists"); close(true); return; } close(true); await applyCode(rowIndex, value); focusCell(rowIndex, 1); }; box.querySelector("[data-save]").onclick = save; box.querySelector("[data-cancel]").onclick = () => close(null); code.onkeydown = event => { if (event.key === "Enter") { event.preventDefault(); save(); } }; setTimeout(() => { code.focus(); code.select(); }, 10); }); }
+
+function findWastageRowToSave(preferred) { const order = []; if (preferred != null) order.push(preferred); voucher.rows.forEach((_, i) => { if (!order.includes(i)) order.push(i); }); for (const i of order) { if (voucher.rows[i].code.trim() && voucher.rows[i].wastage.trim()) return i; } return preferred; }
+async function saveActiveWastage() { let rowIndex = voucher.activeRow; if (rowIndex == null || !voucher.rows[rowIndex].code.trim()) rowIndex = findWastageRowToSave(rowIndex); if (rowIndex == null) return; const row = voucher.rows[rowIndex]; const value = pyFloat(row.wastage); if (!row.wastage.trim() || !/^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(row.wastage.trim())) { setIndicator(rowIndex, false); return say("SAVE WASTAGE", "Enter valid wastage."); } const client = $("vClient").value.trim(), code = row.code.trim(); if (!client || !code) { setIndicator(rowIndex, false); return say("SAVE WASTAGE", "Select client and code."); } const payload = await api("/api/client-code-wastage", { json: { client, code, value } }); if (!payload.ok) { setIndicator(rowIndex, false); return say("SAVE", payload.error); } absorb(payload); setIndicator(rowIndex, true); }
+
+$("vPrint").addEventListener("click", printVoucher);
+async function printVoucher() {
+  const client = $("vClient").value.trim(); if (!client) return say("PRINT", "Select client!"); clearTimeout(voucher.timer); calculateAll();
+  const printable = voucher.rows.map((row, index) => ({ row, index })).filter(({ row }) => pyFloat(row.gross) > 0 || pyFloat(row.amount) > 0);
+  if (!printable.length) return say("PRINT", "No items to print!");
+  const allotted = await api("/api/voucher-number/commit", { method: "POST" }); if (!allotted.ok) return say("PRINT", allotted.error); const voucherNo = allotted.voucherNo;
+  const bodyRows = printable.map(({ row, index }) => `<tr><td>${index + 1}</td><td>${esc(row.code)}</td><td class="l">${esc(row.item)}</td><td>${esc(row.pcs)}</td><td>${esc(row.gross)}</td><td>${esc(row.less)}</td><td>${esc(row.net)}</td><td>${esc(row.melting)}</td><td>${esc(row.wastage)}</td><td>${esc(row.fine)}</td><td>${esc(row.amount)}</td><td>${esc(row.gst)}</td><td>${esc(row.hall_gst)}</td></tr>`).join("");
+  const t = voucher.totals;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${esc(voucherNo)}</title><style>@page { size: 5.83in 8.27in portrait; margin: 0.16in; } body { font-family: Arial, sans-serif; font-size: 7pt; line-height: 1.12; margin: 0; } h1 { font-size: 13pt; margin: 0; text-align: center; } h3 { font-size: 8pt; margin: 1px 0; text-align: center; font-weight: normal; } h2 { font-size: 10pt; margin: 3px 0 6px; text-align: center; } .info { display: flex; justify-content: space-between; margin-bottom: 4px; } table { width: 100%; border-collapse: collapse; } th, td { border: 0.5pt solid #000; padding: 1.5px 3px; text-align: right; } th { background: #e8e8e8; font-size: 6.5pt; } td.l, th.l { text-align: left; } tr.total td { font-weight: bold; border-top: 1pt solid #000; } .meta { margin-top: 6px; } .summary { margin-top: 8px; width: 46%; margin-left: auto; } .summary td { border: 0; padding: 1.5px 0; } .summary td.k { text-align: left; } .summary tr.big td { font-weight: bold; font-size: 8.5pt; border-top: 0.8pt solid #000; } .sign { margin-top: 26px; text-align: right; }</style></head><body><h1>PALAK JEWELLERS PVT LTD</h1><h3>Mumbai, Maharashtra</h3><h2>ISSUE VOUCHER - GL</h2><div class="info"><div><b>To:</b> ${esc(client)}</div><div><b>Voucher No:</b> ${esc(voucherNo)} &nbsp; <b>Date:</b> ${esc($("vDate").value)}</div></div><table><thead><tr><th>Sr</th><th>Code</th><th class="l">Name</th><th>Pcs</th><th>Gross</th><th>Less</th><th>Net</th><th>Melt%</th><th>Wast%</th><th>Fine</th><th>Stone Chrg/HM</th><th>GST%</th><th>Hall/Lab GST Amt</th></tr></thead><tbody>${bodyRows}<tr class="total"><td colspan="3" class="l">TOTAL</td><td>${esc(t.pcs.value)}</td><td>${esc(t.gross.value)}</td><td>${esc(t.less.value)}</td><td>${esc(t.net.value)}</td><td></td><td></td><td>${esc(t.fine.value)}</td><td>${esc(t.amount.value)}</td><td></td><td>${esc(t.hall_gst.value)}</td></tr></tbody></table><div class="meta"><b>Gold Rate:</b> ${esc($("vGold").value)} &nbsp; <b>Wt.%:</b> ${esc($("vWt").value)}</div>${$("vNarration").value.trim() ? `<div class="meta"><b>Narration:</b> ${esc($("vNarration").value)}</div>` : ""}<table class="summary"><tr><td class="k">Stone Chrg/HM Amount:</td><td>&#8377; ${esc($("vStone").value)}</td></tr><tr><td class="k">Fine Amount:</td><td>&#8377; ${esc($("vFine").value)}</td></tr><tr><td class="k">GST Amount:</td><td>&#8377; ${esc($("vGst").value)}</td></tr><tr class="big"><td class="k">NET BALANCE:</td><td>&#8377; ${esc($("vNet").value)}</td></tr></table><div class="sign">_________________________<br>Authorized Signatory</div></body></html>`;
+  openPrintWindow(html, "Could not open print window."); S.nextVoucherNo = allotted.nextVoucherNo; $("vNumber").value = allotted.nextVoucherNo;
+}
+
+/* ============================================================ hotkeys & init */
+document.addEventListener("keydown", event => {
+  const ctrl = event.ctrlKey || event.metaKey; if (!ctrl) return; const key = event.key.toLowerCase();
+  if (key === "s") { if (currentScreen === "voucher") { event.preventDefault(); saveActiveWastage(); } else if (currentScreen === "client") { event.preventDefault(); saveClient(); } return; }
+  if (currentScreen !== "client") return;
+  if (key === "z" && !event.shiftKey) { event.preventDefault(); undoForm(); } else if (key === "y" || (key === "z" && event.shiftKey)) { event.preventDefault(); redoForm(); }
+});
+document.addEventListener("keydown", event => { if (event.key === "Escape" && currentScreen === "voucher") hideDropdown(); });
+
+/* ============================================================ scanner */
+const PJ_SCAN_API_KEY = typeof atob !== "undefined" ? atob("QVEuQWI4Uk42SVprRmtJd2VFUDhiRm0wRUYwZUprVUh0S3d0enJpV045dGZWS0F6QUZ0Z1E=") : "";
+let scanImages = [];
+let scanSide = null;
+
+
+
+function triggerScanCamera(side) {
+  scanSide = side;
+  if (window.Android && window.Android.openNativeCamera) {
+    window.Android.openNativeCamera();
+  } else {
+    say("Error", "Native camera bridge not found.");
+  }
+}
+
+async function onPhotoCaptured(base64Data) {
+  const previewUrl = 'data:image/jpeg;base64,' + base64Data;
+  const imgObj = { data: base64Data, previewUrl, mimeType: 'image/jpeg' };
+
+  if (scanSide === 'front') {
+    scanImages[0] = imgObj;
+    document.getElementById('thumbFront').innerHTML = `<img src="${previewUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+    document.getElementById('btnTakeFront').disabled = true;
+    document.getElementById('btnTakeFront').style.opacity = '0.5';
+    document.getElementById('btnTakeFront').innerText = '✓ FRONT OK';
+    document.getElementById('btnTakeBack').disabled = false;
+    document.getElementById('btnTakeBack').style.opacity = '1';
+    document.getElementById('btnExtractOnlyFront').style.display = 'block';
+  } else if (scanSide === 'back') {
+    scanImages[1] = imgObj;
+    document.getElementById('thumbBack').innerHTML = `<img src="${previewUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+    startScanExtraction();
+  }
+}
+// Expose to global for Android
+window.onPhotoCaptured = onPhotoCaptured;
+
+function startScanExtraction(onlyFront) {
+  if (onlyFront) scanImages = [scanImages[0]];
+  const preview = document.getElementById('scanPreview');
+  preview.innerHTML = '';
+  scanImages.forEach(img => {
+    if(img) preview.innerHTML += `<img src="${img.previewUrl}" style="height:80px;border-radius:6px;border:1px solid var(--line);">`;
+  });
+
+  document.getElementById('scanStatus').innerHTML = '<span class="spinner"></span> Extracting card data...';
+  performExtraction();
+}
+
+function extractPhoneNumbers(input) {
+  if (!input) return [];
+  const rawItems = Array.isArray(input) ? input : [input];
+  const results = [];
+  rawItems.forEach(item => {
+    if (!item) return;
+    const parts = String(item).split(/&|\/|,|;|\n|\band\b|\bor\b/i);
+    parts.forEach(part => {
+      let digits = String(part).replace(/\D/g, "");
+      if (!digits) return;
+      if (digits.length === 12 && digits.startsWith("91")) {
+        digits = digits.slice(2);
+      } else if (digits.length > 15) {
+        digits = digits.slice(0, 15);
+      }
+      if (digits.length >= 7 && digits.length <= 15) {
+        if (!results.includes(digits)) {
+          results.push(digits);
+        }
+      }
+    });
+  });
+  return results;
+}
+
+async function performExtraction() {
+  const status = document.getElementById('scanStatus');
+  const prompt = `Extract business card info into JSON.
+CRITICAL LANGUAGE REQUIREMENT: Transliterate and translate ALL text (including Hindi, Marathi, Devanagari, or any non-English script) strictly into ENGLISH (Latin alphabet). Do NOT output any Devanagari / non-English characters. Convert names, company name, address, city, state, and pincode directly into standard English. Ensure you identify State and City separately.
+Output JSON only with format: {"names":[], "company":"", "phones":[], "email":"", "address":"", "city":"", "state":"", "pincode":""}`;
+
+  const imageParts = scanImages.filter(img => img).map(img => ({ inlineData: { data: img.data, mimeType: img.mimeType } }));
+
+  const payload = {
+    contents: [{ parts: [{ text: prompt }, ...imageParts] }],
+    generationConfig: { response_mime_type: "application/json", temperature: 0.1 }
+  };
+
+  const CANDIDATE_MODELS = [
+    "gemini-3-flash-preview",
+    "gemini-3.1-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-3.5-flash"
+  ];
+
+  try {
+    let result = null;
+    let lastError = null;
+
+    for (const model of CANDIDATE_MODELS) {
+      try {
+        status.innerText = `Extracting card data (${model})...`;
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${PJ_SCAN_API_KEY}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        });
+        if (response.ok) {
+          result = await response.json();
+          break;
+        } else {
+          const errData = await response.json().catch(() => null);
+          const msg = errData && errData.error && errData.error.message;
+          lastError = new Error(msg || `Service Busy (HTTP ${response.status})`);
+        }
+      } catch (fetchErr) {
+        lastError = fetchErr;
+      }
+    }
+
+    if (!result || !result.candidates || !result.candidates[0]) {
+      throw lastError || new Error("AI service temporarily unavailable. Please try again.");
+    }
+
+    const rawText = result.candidates[0].content.parts[0].text.replace(/```json/gi, '').replace(/```/gi, '').trim();
+    const data = JSON.parse(rawText);
+
+    // Populate fields
+    const namesDiv = document.getElementById('scanNames');
+    namesDiv.innerHTML = '<label style="font-size: 11px; color: var(--muted); font-weight: 700;">NAME(S)</label>';
+    if (data.names && data.names.length > 0) {
+      data.names.forEach(n => namesDiv.innerHTML += `<input type="text" class="sc_name" value="${n}">`);
+    } else {
+      namesDiv.innerHTML += `<input type="text" class="sc_name" placeholder="Name">`;
+    }
+
+    const phonesDiv = document.getElementById('scanPhones');
+    phonesDiv.innerHTML = '<label style="font-size: 11px; color: var(--muted); font-weight: 700;">MOBILE(S)</label>';
+    const cleanPhones = extractPhoneNumbers(data.phones || []);
+    if (cleanPhones.length > 0) {
+      cleanPhones.forEach(p => phonesDiv.innerHTML += `<input type="tel" class="sc_phone" value="${p}">`);
+    } else {
+      phonesDiv.innerHTML += `<input type="tel" class="sc_phone" placeholder="Mobile Number">`;
+    }
+
+    document.getElementById('sc_company').value = data.company || '';
+    document.getElementById('sc_email').value = data.email || '';
+    document.getElementById('sc_address').value = data.address || '';
+    document.getElementById('sc_city').value = data.city || '';
+    document.getElementById('sc_state').value = data.state || '';
+    document.getElementById('sc_pin').value = (data.pincode || '').replace(/\D/g, '').slice(0, 15);
+
+    status.innerText = "✅ Extraction Complete. Please verify.";
+    document.getElementById('scanForm').scrollIntoView({ behavior: 'smooth' });
+
+  } catch (err) {
+    console.error(err);
+    status.innerHTML = `<span style="color:var(--red)">Extraction Failed: ${err.message}</span>`;
+  }
+}
+
+function saveContactToNative() {
+  const names = Array.from(document.querySelectorAll('.sc_name')).map(i => i.value.trim()).filter(Boolean);
+  const rawPhones = Array.from(document.querySelectorAll('.sc_phone')).map(i => i.value);
+  const cleanPhones = extractPhoneNumbers(rawPhones);
+  const company = document.getElementById('sc_company').value.trim();
+  const cleanPin = (document.getElementById('sc_pin').value || '').replace(/\D/g, '').slice(0, 15);
+  const fullAddress = `${document.getElementById('sc_address').value} ${document.getElementById('sc_city').value} ${document.getElementById('sc_state').value} ${cleanPin}`.trim();
+
+  if (window.Android && window.Android.openNativeContactScreen) {
+    window.Android.openNativeContactScreen(
+      company,
+      names.join(' & '),
+      cleanPhones[0] || '',
+      cleanPhones[1] || '',
+      cleanPhones[2] || '',
+      document.getElementById('sc_email').value.trim(),
+      fullAddress
+    );
+  } else {
+    say("Bridge Error", "Android bridge not detected.");
+  }
+}
+
+async function saveToAddressBook() {
+  const names = Array.from(document.querySelectorAll('.sc_name')).map(i => i.value.trim()).filter(Boolean);
+  const rawPhones = Array.from(document.querySelectorAll('.sc_phone')).map(i => i.value);
+  const cleanPhones = extractPhoneNumbers(rawPhones);
+  const cleanPin = (document.getElementById('sc_pin').value || '').replace(/\D/g, '').slice(0, 15);
+
+  const fields = {
+    company: document.getElementById('sc_company').value.trim(),
+    person: names.join(' & '),
+    phone: cleanPhones[0] || '',
+    phone2: cleanPhones[1] || '',
+    phone3: cleanPhones[2] || '',
+    email: document.getElementById('sc_email').value.trim(),
+    address: document.getElementById('sc_address').value.trim(),
+    city: document.getElementById('sc_city').value.trim(),
+    state: document.getElementById('sc_state').value.trim(),
+    pincode: cleanPin
+  };
+
+  if (!fields.company && !fields.person) return say("Error", "Company or Person name is required.");
+  if (!fields.phone) return say("Error", "Phone number is required.");
+
+  if (!await ask("Confirm", "Add this contact to your CRM Address Book?", "ADD")) return;
+
+  const payload = await api("/api/clients", { json: { fields } });
+  if (payload.ok) {
+    absorb(payload);
+    await say("Success", "Contact saved to Address Book!");
+    resetScanForm();
+  } else {
+    say("Error", payload.error || "Save failed.");
+  }
+}
+
+function resetScanForm() {
+  document.getElementById('thumbFront').innerHTML = '1';
+  document.getElementById('thumbBack').innerHTML = '2';
+  document.getElementById('btnTakeFront').disabled = false;
+  document.getElementById('btnTakeFront').style.opacity = '1';
+  document.getElementById('btnTakeFront').innerText = '1. FRONT PHOTO';
+  document.getElementById('btnTakeBack').disabled = true;
+  document.getElementById('btnTakeBack').style.opacity = '0.5';
+  document.getElementById('btnTakeBack').innerText = '2. BACK PHOTO';
+  document.getElementById('btnExtractOnlyFront').style.display = 'none';
+
+  document.getElementById('scanNames').innerHTML = '<label style="font-size: 11px; color: var(--muted); font-weight: 700;">NAME(S)</label><input type="text" class="sc_name" placeholder="Name">';
+  document.getElementById('scanPhones').innerHTML = '<label style="font-size: 11px; color: var(--muted); font-weight: 700;">MOBILE(S)</label><input type="tel" class="sc_phone" placeholder="+91...">';
+  document.getElementById('sc_company').value = '';
+  document.getElementById('sc_email').value = '';
+  document.getElementById('sc_address').value = '';
+  document.getElementById('sc_city').value = '';
+  document.getElementById('sc_state').value = '';
+  document.getElementById('sc_pin').value = '';
+  document.getElementById('scanPreview').innerHTML = '';
+  document.getElementById('scanStatus').innerText = 'Ready to scan.';
+  scanImages = [];
+}
+
+$("themePick").addEventListener("change", () => setTheme($("themePick").value));
+function wireLogo(imageId, wordmarkId) {
+  const image = $(imageId);
+  if (!image) return;
+  const showLogo = () => {
+    if (!image.naturalWidth) return;
+    image.hidden = false;
+    if (wordmarkId && $(wordmarkId)) $(wordmarkId).hidden = true;
+  };
+  if (image.complete) showLogo();
+  image.addEventListener("load", showLogo);
+  image.addEventListener("error", () => { image.hidden = true; });
+}
+
+(function start() {
+  // Mobile Menu Logic
+  const menuBtn = $("menuBtn");
+  const sidebar = $("sidebar");
+  const veil = $("sidebarVeil");
+  const toggleMenu = (on) => {
+    sidebar.classList.toggle("active", on);
+    veil.classList.toggle("active", on);
+  };
+  menuBtn.onclick = () => {
+    show("home"); // Take to Home page
+    toggleMenu(true); // Open Sidebar
+  };
+  veil.onclick = () => toggleMenu(false);
+  sidebar.querySelectorAll(".btn").forEach(b => b.addEventListener("click", () => toggleMenu(false)));
+
+  // Voucher Double Click Logic
+  $("vClient").addEventListener("dblclick", () => addVoucherClientPopup());
+  $("vBody").addEventListener("dblclick", event => {
+    const input = event.target.closest("input[data-row]");
+    if (!input) return;
+    const c = Number(input.getAttribute("data-col"));
+    const r = Number(input.getAttribute("data-row"));
+    if (c === 0) addCodePopup(r);
+  });
+
+  // Biometric Logic
+  const bioBtn = $("bioBtn");
+  if (window.Android && window.Android.authenticateBiometric) {
+    bioBtn.style.display = "block";
+    bioBtn.onclick = () => window.Android.authenticateBiometric();
+  }
+  window.onBiometricSuccess = async (username) => {
+    if (!isDeviceAuthorized()) {
+      showDeviceLockScreen();
+      return;
+    }
+    try {
+      await dbInitPromise;
+      const s = LOCAL.state || await dbLoad();
+      const target = String(username || "").trim().toLowerCase();
+      let user = null;
+      if (s && s.users && Array.isArray(s.users.items)) {
+        user = target ? s.users.items.find(u => String(u.username || "").trim().toLowerCase() === target) : null;
+        if (!user) {
+          user = s.users.items.find(u => u.role === "superadmin") || s.users.items[0];
+        }
+      }
+
+      if (user) {
+        S.user = { id: user.id, username: user.username, role: user.role };
+      } else {
+        S.user = { id: 1, username: username || "Living", role: "superadmin" };
+      }
+
+      await enterApp();
+    } catch (err) {
+      console.error("Biometric Unlock Error:", err);
+      if (!isDeviceAuthorized()) {
+        showDeviceLockScreen();
+        return;
+      }
+      // Fail-safe direct unlock
+      S.user = { id: 1, username: "Living", role: "superadmin" };
+      await enterApp();
+      show("home");
+    }
+  };
+  window.onBiometricUnavailable = () => { bioBtn.style.display = "none"; };
+
+  window.lockApp = () => {
+    if (!isDeviceAuthorized()) {
+      showDeviceLockScreen();
+      return;
+    }
+    // Only lock if we are already logged in
+    if (!S.user) return;
+    logout(true); // Silent logout (hides shell, shows login screen)
+  };
+
+  // Wire Device Lock Screen events
+  const btnCopy = $("btnCopyDeviceToken");
+  if (btnCopy) btnCopy.onclick = handleCopyDeviceToken;
+  const btnActivate = $("btnActivateDevice");
+  if (btnActivate) btnActivate.onclick = handleDeviceActivation;
+  const keyInput = $("activationKeyInput");
+  if (keyInput) {
+    keyInput.addEventListener("input", (e) => {
+      e.target.value = formatActivationKeyInput(e.target.value);
+    });
+    keyInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleDeviceActivation();
+      }
+    });
+  }
+
+  wireLogo("loginLogo", "loginWordmark"); wireLogo("sideLogo", "sideWordmark"); wireLogo("homeLogo", null);
+  const savedTheme = localStorage.getItem("plkTheme") || "Dark"; $("themePick").value = savedTheme; setTheme(savedTheme);
+  buildFieldGrid(); for (let r = 0; r < ROW_COUNT; r++) voucher.rows.push(blankRow()); buildVoucherGrid();
+  if($("clock")) $("clock").textContent = stamp();
+
+  // Device Lock Gate: If hardware is not activated, block CRM access and show Lock Screen
+  if (!isDeviceAuthorized()) {
+    showDeviceLockScreen();
+    return;
+  }
+
+  enterApp().catch(() => { $("loginUser").focus(); });
+})();
+</script>
+</body>
+</html>
