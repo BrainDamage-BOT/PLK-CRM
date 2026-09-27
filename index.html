@@ -664,7 +664,7 @@
       <label style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; display:block; margin-bottom:6px;">
         16-Character Activation Key
       </label>
-      <input id="activationKeyInput" type="text" inputmode="text" placeholder="PJ-XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" style="width:100%; text-align:center; font-family:monospace; font-size:16px; letter-spacing:2px; text-transform:uppercase;">
+      <input id="activationKeyInput" type="text" inputmode="text" autocomplete="one-time-code" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="PJ-XXXX-XXXX-XXXX" maxlength="25" style="width:100%; text-align:center; font-family:monospace; font-size:16px; letter-spacing:2px; text-transform:uppercase; -webkit-user-select:text !important; user-select:text !important; -webkit-touch-callout:default !important;">
     </div>
 
     <!-- Activate Button -->
@@ -1979,13 +1979,13 @@ async function handleCopyDeviceToken() {
   const token = (tokenEl ? tokenEl.textContent : "").trim();
   if (!token) return;
   let copied = false;
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
       await navigator.clipboard.writeText(token);
       copied = true;
+    } catch (e) {
+      console.warn("navigator.clipboard failed:", e);
     }
-  } catch (e) {
-    console.warn("navigator.clipboard failed, attempting fallback:", e);
   }
   if (!copied) {
     try {
@@ -1998,6 +1998,9 @@ async function handleCopyDeviceToken() {
       document.body.appendChild(ta);
       ta.select();
       copied = document.execCommand("copy");
+      if (document.activeElement && document.activeElement.blur) {
+        document.activeElement.blur();
+      }
       document.body.removeChild(ta);
     } catch (e2) {
       console.error("execCommand fallback failed:", e2);
@@ -2023,15 +2026,12 @@ async function handlePasteActivationKey() {
   const input = $("activationKeyInput");
   const btn = $("btnPasteActivationKey");
   let pasted = "";
-  try {
-    if (navigator.clipboard && navigator.clipboard.readText) {
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    try {
       pasted = await navigator.clipboard.readText();
+    } catch (e) {
+      console.warn("navigator.clipboard.readText not granted or error:", e);
     }
-  } catch (e) {
-    console.warn("navigator.clipboard.readText failed:", e);
-  }
-  if (!pasted) {
-    pasted = prompt("Paste your 16-Character Activation Key below:") || "";
   }
   if (pasted && input) {
     input.value = formatActivationKeyInput(pasted);
@@ -2046,6 +2046,15 @@ async function handlePasteActivationKey() {
         btn.style.borderColor = "var(--blue)";
         btn.style.color = "var(--blue)";
       }, 2000);
+    }
+  } else if (input) {
+    // Non-blocking fallback: focus and select so user can tap Gboard chip or native paste without freezing
+    input.focus();
+    input.select();
+    if (btn) {
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = "👉 TAP PASTE ABOVE";
+      setTimeout(() => { btn.innerHTML = origHtml; }, 2500);
     }
   }
 }
@@ -3465,8 +3474,33 @@ function wireLogo(imageId, wordmarkId) {
   if (btnActivate) btnActivate.onclick = handleDeviceActivation;
   const keyInput = $("activationKeyInput");
   if (keyInput) {
+    let isComposing = false;
+    keyInput.addEventListener("compositionstart", () => { isComposing = true; });
+    keyInput.addEventListener("compositionend", (e) => {
+      isComposing = false;
+      const formatted = formatActivationKeyInput(e.target.value);
+      if (formatted && formatted !== e.target.value) e.target.value = formatted;
+    });
     keyInput.addEventListener("input", (e) => {
-      e.target.value = formatActivationKeyInput(e.target.value);
+      if (isComposing || e.isComposing) return;
+      let val = e.target.value.toUpperCase();
+      let raw = val.replace(/[^0-9A-Z]/g, "");
+      if (raw.startsWith("PJ")) raw = raw.slice(2);
+      if (raw.length === 12 && !val.includes("-")) {
+        e.target.value = formatActivationKeyInput(val);
+      } else if (val !== e.target.value) {
+        e.target.value = val;
+      }
+    });
+    keyInput.addEventListener("paste", (e) => {
+      setTimeout(() => {
+        e.target.value = formatActivationKeyInput(e.target.value);
+      }, 20);
+    });
+    keyInput.addEventListener("blur", (e) => {
+      if (e.target.value) {
+        e.target.value = formatActivationKeyInput(e.target.value);
+      }
     });
     keyInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
