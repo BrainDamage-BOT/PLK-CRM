@@ -528,14 +528,13 @@
       padding: calc(env(safe-area-inset-top, 0px) + 60px) 12px calc(env(safe-area-inset-bottom, 0px) + 20px);
     }
 
-    /* Menu Toggle Button */
-    #menuBtn {
+    /* Menu Toggle Buttons (Symmetrical Left & Right Corner Support) */
+    #menuBtn, #menuBtnRight {
       display: flex !important;
       align-items: center;
       justify-content: center;
       position: fixed;
       top: calc(env(safe-area-inset-top, 0px) + 10px);
-      left: calc(env(safe-area-inset-left, 0px) + 10px);
       width: 44px;
       height: 44px;
       z-index: 150;
@@ -545,6 +544,26 @@
       border-radius: 8px;
       font-size: 24px;
       box-shadow: var(--shadow);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    #menuBtn {
+      left: calc(env(safe-area-inset-left, 0px) + 10px);
+    }
+    #menuBtnRight {
+      right: calc(env(safe-area-inset-right, 0px) + 10px);
+    }
+    #menuBtn:active, #menuBtnRight:active {
+      transform: scale(0.95);
+      background: var(--gold-dark);
+    }
+    #menuBtn.hidden, #menuBtnRight.hidden {
+      display: none !important;
+    }
+
+    #sidebar.active, #sidebar.open {
+      left: 0 !important;
     }
 
     /* Overlay Veil */
@@ -555,7 +574,7 @@
       background: rgba(0,0,0,0.6);
       z-index: 190;
     }
-    #sidebarVeil.active { display: block; }
+    #sidebarVeil.active, #sidebarVeil.open { display: block !important; }
     
     /* Login Fixes */
     .login-box {
@@ -692,7 +711,8 @@
 
 <!-- ============================================================ SHELL -->
 <div id="shell" hidden>
-  <button id="menuBtn">&#9776;</button>
+  <button id="menuBtn" title="Menu" aria-label="Toggle Navigation Menu">&#9776;</button>
+  <button id="menuBtnRight" title="Menu" aria-label="Toggle Navigation Menu">&#9776;</button>
   <div id="sidebarVeil"></div>
   <!-- Sidebar becomes Side Drawer on Mobile -->
   <aside id="sidebar">
@@ -1623,11 +1643,66 @@ function absorb(payload) {
 const SCREENS = { home: "screenHome", dashboard: "screenDashboard", client: "screenClient", accounts: "screenAccounts", voucher: "screenVoucher", scanner: "screenScanner" };
 let currentScreen = "home";
 
+const screenStack = ["home"];
+
+function isDrawerMode() {
+  return window.innerWidth <= 850;
+}
+
+function openDrawer() {
+  const sidebar = $("sidebar");
+  const veil = $("sidebarVeil");
+  if (sidebar) {
+    sidebar.classList.add("active");
+    sidebar.classList.add("open");
+  }
+  if (veil) {
+    veil.classList.add("active");
+    veil.classList.add("open");
+  }
+}
+
+function closeDrawer() {
+  const sidebar = $("sidebar");
+  const veil = $("sidebarVeil");
+  if (sidebar) {
+    sidebar.classList.remove("active");
+    sidebar.classList.remove("open");
+  }
+  if (veil) {
+    veil.classList.remove("active");
+    veil.classList.remove("open");
+  }
+}
+
+function toggleDrawer() {
+  const sidebar = $("sidebar");
+  if (sidebar && (sidebar.classList.contains("active") || sidebar.classList.contains("open"))) {
+    closeDrawer();
+  } else {
+    openDrawer();
+  }
+}
+
 function show(name) {
+  if (currentScreen !== name) {
+    if (name === "home") {
+      screenStack.length = 0;
+      screenStack.push("home");
+    } else {
+      if (screenStack[screenStack.length - 1] !== name) {
+        screenStack.push(name);
+      }
+    }
+  }
   currentScreen = name;
   Object.keys(SCREENS).forEach(key => { $(SCREENS[key]).classList.toggle("active", key === name); });
-  // In Mobile Nav, we usually keep the bottom nav visible everywhere, but we can hide it on forms if needed.
-  $("sidebar").classList.toggle("hidden", name === "client" || name === "voucher");
+  const hideSide = (name === "client" || name === "voucher");
+  $("sidebar").classList.toggle("hidden", hideSide);
+  if ($("menuBtn")) $("menuBtn").classList.toggle("hidden", hideSide);
+  if ($("menuBtnRight")) $("menuBtnRight").classList.toggle("hidden", hideSide);
+  closeDrawer();
+  applyRoleVisibility();
 }
 
 function isSuperadmin() { return !!(S.user && S.user.role === "superadmin"); }
@@ -2190,6 +2265,7 @@ async function logout(silent) {
 
 document.querySelectorAll("[data-go]").forEach(button => {
   button.addEventListener("click", async () => {
+    closeDrawer();
     const target = button.getAttribute("data-go");
     if (target === "logout") return logout();
     if (target === "newclient") return openClientForm(null);
@@ -3748,20 +3824,34 @@ function wireLogo(imageId, wordmarkId) {
 }
 
 (function start() {
-  // Mobile Menu Logic
+  // Mobile Menu Drawer Logic
   const menuBtn = $("menuBtn");
-  const sidebar = $("sidebar");
+  if (menuBtn) {
+    menuBtn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleDrawer();
+    };
+  }
+  const menuBtnRight = $("menuBtnRight");
+  if (menuBtnRight) {
+    menuBtnRight.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleDrawer();
+    };
+  }
   const veil = $("sidebarVeil");
-  const toggleMenu = (on) => {
-    sidebar.classList.toggle("active", on);
-    veil.classList.toggle("active", on);
-  };
-  menuBtn.onclick = () => {
-    show("home"); // Take to Home page
-    toggleMenu(true); // Open Sidebar
-  };
-  veil.onclick = () => toggleMenu(false);
-  sidebar.querySelectorAll(".btn").forEach(b => b.addEventListener("click", () => toggleMenu(false)));
+  if (veil) {
+    veil.onclick = (e) => {
+      e.preventDefault();
+      closeDrawer();
+    };
+  }
+  const sidebar = $("sidebar");
+  if (sidebar) {
+    sidebar.querySelectorAll(".btn").forEach(b => b.addEventListener("click", () => closeDrawer()));
+  }
 
   // Voucher Double Click Logic
   $("vClient").addEventListener("dblclick", () => addVoucherClientPopup());
