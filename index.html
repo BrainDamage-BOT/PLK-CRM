@@ -528,13 +528,14 @@
       padding: calc(env(safe-area-inset-top, 0px) + 60px) 12px calc(env(safe-area-inset-bottom, 0px) + 20px);
     }
 
-    /* Menu Toggle Buttons (Symmetrical Left & Right Corner Support) */
-    #menuBtn, #menuBtnRight {
+    /* Menu Toggle Button (Top-Left Corner) */
+    #menuBtn {
       display: flex !important;
       align-items: center;
       justify-content: center;
       position: fixed;
       top: calc(env(safe-area-inset-top, 0px) + 10px);
+      left: calc(env(safe-area-inset-left, 0px) + 10px);
       width: 44px;
       height: 44px;
       z-index: 150;
@@ -548,17 +549,11 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
-    #menuBtn {
-      left: calc(env(safe-area-inset-left, 0px) + 10px);
-    }
-    #menuBtnRight {
-      right: calc(env(safe-area-inset-right, 0px) + 10px);
-    }
-    #menuBtn:active, #menuBtnRight:active {
+    #menuBtn:active {
       transform: scale(0.95);
       background: var(--gold-dark);
     }
-    #menuBtn.hidden, #menuBtnRight.hidden {
+    #menuBtn.hidden {
       display: none !important;
     }
 
@@ -712,7 +707,6 @@
 <!-- ============================================================ SHELL -->
 <div id="shell" hidden>
   <button id="menuBtn" title="Menu" aria-label="Toggle Navigation Menu">&#9776;</button>
-  <button id="menuBtnRight" title="Menu" aria-label="Toggle Navigation Menu">&#9776;</button>
   <div id="sidebarVeil"></div>
   <!-- Sidebar becomes Side Drawer on Mobile -->
   <aside id="sidebar">
@@ -1700,7 +1694,6 @@ function show(name) {
   const hideSide = (name === "client" || name === "voucher");
   $("sidebar").classList.toggle("hidden", hideSide);
   if ($("menuBtn")) $("menuBtn").classList.toggle("hidden", hideSide);
-  if ($("menuBtnRight")) $("menuBtnRight").classList.toggle("hidden", hideSide);
   closeDrawer();
   applyRoleVisibility();
 }
@@ -3828,14 +3821,6 @@ function wireLogo(imageId, wordmarkId) {
   const menuBtn = $("menuBtn");
   if (menuBtn) {
     menuBtn.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      toggleDrawer();
-    };
-  }
-  const menuBtnRight = $("menuBtnRight");
-  if (menuBtnRight) {
-    menuBtnRight.onclick = (e) => {
       e.preventDefault();
       e.stopPropagation();
       toggleDrawer();
