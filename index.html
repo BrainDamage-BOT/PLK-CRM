@@ -766,6 +766,8 @@ We are live 24*7. Select from over 10000 designs. Just a click away.</div>
         <button class="btn purple" id="btnStickers">&#128424; STICKERS</button>
         <button class="btn forest" id="btnExport" data-admin>&#128202; EXPORT EXCEL</button>
         <button class="btn teal" id="btnImport" data-admin>&#128229; IMPORT EXCEL</button>
+        <button class="btn green" id="btnWhatsApp" data-admin style="background:var(--forest,#16a34a);color:#fff;font-weight:700">&#128172; WHATSAPP CAMPAIGN</button>
+        <button class="btn blue" id="btnExportVcf" data-admin style="font-weight:700">&#128199; EXPORT VCF</button>
         <button class="btn brown" id="btnBackup" data-admin>&#128190; BACKUP</button>
         <div class="client-counter-badge" id="clientCounter" title="Total Client Entries">Total Clients: 0</div>
       </div>
@@ -2202,11 +2204,15 @@ document.querySelectorAll("[data-go]").forEach(button => {
 const dash = { filtered: [], checked: new Set(), cursor: -1, index: [], stamp: -1 };
 
 function buildClientIndex() {
-  dash.index = S.clients.map(client => ({
-    id: client.id, client, key: String(client.company || "").toLowerCase(),
-    find: `${client.id != null ? client.id : ""}\n${client.company || ""}\n${client.address || ""}\n${client.city || ""}\n${client.state || ""}\n${client.phone || ""}\n${client.phone2 || ""}\n${client.phone3 || ""}\n${client.person || ""}\n${client.gst || ""}\n${client.managed || ""}`.toLowerCase(),
-    cells: `<td>${esc(client.company)}</td><td>${esc(client.city)}</td>`
-  })).sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+  dash.index = S.clients.map(client => {
+    const rawComp = String(client.company || "").trim();
+    const cleanComp = rawComp.replace(/^[^a-zA-Z0-9]+/, "");
+    return {
+      id: client.id, client, key: (cleanComp || rawComp).toLowerCase(),
+      find: `${client.id != null ? client.id : ""}\n${client.company || ""}\n${client.address || ""}\n${client.city || ""}\n${client.state || ""}\n${client.phone || ""}\n${client.phone2 || ""}\n${client.phone3 || ""}\n${client.person || ""}\n${client.gst || ""}\n${client.managed || ""}`.toLowerCase(),
+      cells: `<td>${esc(client.company)}</td><td>${esc(client.city)}</td>`
+    };
+  }).sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
   dash.stamp = clientsStamp;
 }
 
@@ -2219,7 +2225,25 @@ let ROW_H = 37;
 function renderClients() {
   if (dash.stamp !== clientsStamp) buildClientIndex();
   const needle = $("search").value.trim().toLowerCase();
-  dash.filtered = needle ? dash.index.filter(row => row.find.includes(needle)) : dash.index;
+  if (!needle) {
+    dash.filtered = dash.index;
+  } else {
+    const t1 = [], t2 = [], t3 = [], t4 = [];
+    const spaceNeedle = " " + needle;
+    for (let i = 0; i < dash.index.length; i++) {
+      const row = dash.index[i];
+      if (row.key.startsWith(needle)) {
+        t1.push(row);
+      } else if (row.key.includes(spaceNeedle)) {
+        t2.push(row);
+      } else if (row.key.includes(needle)) {
+        t3.push(row);
+      } else if (row.find.includes(needle)) {
+        t4.push(row);
+      }
+    }
+    dash.filtered = t1.concat(t2, t3, t4);
+  }
   if (dash.cursor >= dash.filtered.length) dash.cursor = dash.filtered.length - 1;
   renderWindow();
   updateClientCounter();
@@ -2734,6 +2758,358 @@ async function offlineImport(file) {
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = () => reject(new Error("File read error.")); reader.readAsDataURL(file); });
 }
+
+/* ============================================================ SUPERADMIN WHATSAPP CAMPAIGN STUDIO & VCF SYNC */
+
+$("btnExportVcf").addEventListener("click", () => {
+  exportSelectedToVcf();
+});
+
+$("btnWhatsApp").addEventListener("click", () => {
+  openWhatsAppCampaignModal();
+});
+
+function exportSelectedToVcf() {
+  if (!isSuperadmin()) {
+    return say("ACCESS DENIED", "Contact export is strictly restricted to Superadmin.");
+  }
+  const selectedIds = (typeof checkedClientIds === "function") ? checkedClientIds() : Array.from(dash.checked || []);
+  if (!selectedIds.length) {
+    return say("NO CLIENTS SELECTED", "Please select at least one client using the checkboxes to export contacts.");
+  }
+
+  const clients = selectedIds.map(id => S.clients.find(c => String(c.id).trim() === String(id).trim())).filter(Boolean);
+  if (!clients.length) return say("NO CLIENTS FOUND", "Could not find client records for selected items.");
+
+  const vcfCards = clients.map(c => {
+    const fn = (c.company || c.name || "Client").trim();
+    const org = (c.company || "").trim();
+    const rawPhone = (c.phone || c.phone2 || c.phone3 || "").replace(/\D/g, "");
+    const formattedPhone = rawPhone.length === 10 ? `+91${rawPhone}` : (rawPhone ? `+${rawPhone}` : "");
+    const city = (c.city || "").trim();
+    const address = (c.address || "").trim();
+    const note = `Palak CRM Client ID: ${c.id || ""}`;
+
+    return [
+      "BEGIN:VCARD",
+      "VERSION:3.0",
+      `FN:${fn}`,
+      org ? `ORG:${org}` : "",
+      formattedPhone ? `TEL;TYPE=CELL,VOICE:${formattedPhone}` : "",
+      (address || city) ? `ADR;TYPE=WORK:;;${address};${city};;;` : "",
+      `NOTE:${note}`,
+      "END:VCARD"
+    ].filter(Boolean).join("\r\n");
+  }).join("\r\n\r\n");
+
+  const fileName = `Palak_Contacts_${clients.length}_${new Date().toISOString().slice(0, 10)}.vcf`;
+
+  // Standard vCard download (iOS Safari prompts 'Open in Contacts' / 'Add all Contacts')
+  const blob = new Blob([vcfCards], { type: "text/x-vcard;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  say("VCF EXPORTED", `Successfully exported ${clients.length} contact cards to ${fileName}. Tap the file in Safari to add all contacts to your iPhone address book.`);
+}
+
+function openWhatsAppCampaignModal() {
+  if (!isSuperadmin()) {
+    return say("ACCESS DENIED", "WhatsApp Campaign Studio is strictly restricted to Superadmin.");
+  }
+  const selectedIds = (typeof checkedClientIds === "function") ? checkedClientIds() : Array.from(dash.checked || []);
+  if (!selectedIds.length) {
+    return say("NO CLIENTS SELECTED", "Please select one or more clients from the dashboard table before launching a WhatsApp Campaign.");
+  }
+
+  const clients = selectedIds.map(id => S.clients.find(c => String(c.id).trim() === String(id).trim())).filter(Boolean);
+  if (!clients.length) return say("NO CLIENTS FOUND", "Could not locate records for selected clients.");
+
+  let campaignImages = [];
+  let isRunning = false;
+  let isPaused = false;
+  let currentIdx = 0;
+  let timerId = null;
+
+  modal((box, close) => {
+    box.classList.add("wide");
+    box.style.maxWidth = "880px";
+    box.style.width = "min(880px, 96vw)";
+    box.style.maxHeight = "92vh";
+    box.style.overflowY = "auto";
+    box.style.overflowX = "hidden";
+    box.style.padding = "14px";
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <h3 style="color:var(--forest,#16a34a);font-size:15px;margin:0;display:flex;align-items:center;gap:8px">
+          <span>💬</span> SUPERADMIN WHATSAPP CAMPAIGN STUDIO
+        </h3>
+        <button type="button" class="btn ghost" data-close style="padding:4px 8px">&#10006; CLOSE</button>
+      </div>
+
+      <!-- Safety Alert Banner -->
+      <div style="background:rgba(22,163,74,0.08);border:1px solid var(--forest,#16a34a);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11.5px;line-height:1.4">
+        <strong style="color:var(--forest,#16a34a)">🛡️ ANTI-BAN SAFEGUARDS ACTIVE:</strong>
+        <span style="color:var(--muted)">
+          Personalized placeholders prevent duplicate message hashing. Paced intervals (5–10s) simulate authentic human activity.
+        </span>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px">
+        <!-- Left: Template Editor -->
+        <div style="flex:1 1 320px;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <label style="font-size:11px;font-weight:700;color:var(--muted)">MESSAGE TEMPLATE</label>
+            <div style="display:flex;gap:4px">
+              <button type="button" class="btn ghost" id="tagBtnName" style="padding:1px 6px;font-size:10px;color:var(--blue)">+ {Name}</button>
+              <button type="button" class="btn ghost" id="tagBtnCity" style="padding:1px 6px;font-size:10px;color:var(--blue)">+ {City}</button>
+              <button type="button" class="btn ghost" id="tagBtnPhone" style="padding:1px 6px;font-size:10px;color:var(--blue)">+ {Phone}</button>
+            </div>
+          </div>
+          <textarea id="waMsgTemplate" rows="6" style="width:100%;box-sizing:border-box;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:8px;font-size:13px;resize:vertical" placeholder="Namaste {Name} ji, greetings from Palak Jewellers Pvt Ltd! We have exciting new updates for your store in {City}..."></textarea>
+
+          <!-- Photo Attachment Section -->
+          <div style="margin-top:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <label style="font-size:11px;font-weight:700;color:var(--muted)">ATTACH CAMPAIGN PHOTOS (MAX 5)</label>
+              <button type="button" class="btn ghost" id="waBtnAddImg" style="padding:2px 8px;font-size:11px;color:var(--gold)">📸 Attach Photos</button>
+            </div>
+            <input type="file" id="waImgInput" accept="image/jpeg,image/png" multiple style="display:none">
+            <div id="waImgThumbnails" style="display:flex;gap:8px;flex-wrap:wrap;min-height:46px;background:var(--panel-2,rgba(255,255,255,0.03));padding:6px;border-radius:6px;border:1px solid var(--line);align-items:center">
+              <span id="waImgPlaceholder" style="font-size:11px;color:var(--muted);padding:4px">No photos attached (Optional)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Recipients Queue & Pacing Settings -->
+        <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:10px">
+          <div style="background:var(--panel-2,rgba(255,255,255,0.03));border:1px solid var(--line);border-radius:8px;padding:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:11px;font-weight:700;color:var(--muted)">HUMANIZED PACING DELAY:</span>
+              <span id="waDelayLabel" style="font-size:12px;font-weight:700;color:var(--gold)">6 Seconds</span>
+            </div>
+            <input type="range" id="waDelaySlider" min="4" max="15" value="6" step="1" style="width:100%;accent-color:var(--blue)">
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">Simulates natural typing &amp; prevents WhatsApp velocity triggers.</div>
+          </div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--muted);display:flex;justify-content:space-between">
+            <span>TARGET QUEUE (${clients.length} CLIENTS)</span>
+            <span id="waQueueProgress">0 / ${clients.length} Sent</span>
+          </div>
+
+          <div style="flex:1 1 auto;min-height:120px;max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:6px;background:var(--bg)">
+            <table class="grid" style="width:100%;font-size:11px">
+              <thead>
+                <tr>
+                  <th style="width:28px;text-align:center">#</th>
+                  <th>CLIENT NAME</th>
+                  <th style="width:110px">PHONE</th>
+                  <th style="width:70px;text-align:center">STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="waQueueBody">
+                ${clients.map((c, i) => `
+                  <tr id="waRow_${i}">
+                    <td style="text-align:center;color:var(--muted)">${i + 1}</td>
+                    <td><strong>${esc(c.company || c.name || "Client")}</strong></td>
+                    <td>${esc(c.phone || c.phone2 || "No Phone")}</td>
+                    <td style="text-align:center" id="waStatus_${i}"><span style="color:var(--muted)">Pending</span></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--line)">
+        <div>
+          <button type="button" class="btn blue" id="waBtnExportVcfQuick" style="font-size:11px;padding:6px 10px">&#128199; Save Selected to Contacts First</button>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn ghost" data-close>CANCEL</button>
+          <button type="button" class="btn red" id="waBtnPause" style="display:none;font-weight:700">&#10074;&#10074; PAUSE</button>
+          <button type="button" class="btn green" id="waBtnStart" style="background:var(--forest,#16a34a);color:#fff;font-weight:700;padding:8px 20px">&#9654; START CAMPAIGN</button>
+        </div>
+      </div>
+    `;
+
+    const txtTemplate = box.querySelector("#waMsgTemplate");
+    const delaySlider = box.querySelector("#waDelaySlider");
+    const delayLabel = box.querySelector("#waDelayLabel");
+    const btnAddImg = box.querySelector("#waBtnAddImg");
+    const imgInput = box.querySelector("#waImgInput");
+    const imgThumbnails = box.querySelector("#waImgThumbnails");
+    const btnStart = box.querySelector("#waBtnStart");
+    const btnPause = box.querySelector("#waBtnPause");
+    const progressLabel = box.querySelector("#waQueueProgress");
+
+    box.querySelector("#tagBtnName").onclick = () => insertTag("{Name}");
+    box.querySelector("#tagBtnCity").onclick = () => insertTag("{City}");
+    box.querySelector("#tagBtnPhone").onclick = () => insertTag("{Phone}");
+
+    function insertTag(tag) {
+      const start = txtTemplate.selectionStart;
+      const end = txtTemplate.selectionEnd;
+      const text = txtTemplate.value;
+      txtTemplate.value = text.substring(0, start) + tag + text.substring(end);
+      txtTemplate.focus();
+      txtTemplate.selectionStart = txtTemplate.selectionEnd = start + tag.length;
+    }
+
+    delaySlider.oninput = () => {
+      delayLabel.textContent = `${delaySlider.value} Seconds`;
+    };
+
+    btnAddImg.onclick = () => imgInput.click();
+    imgInput.onchange = async () => {
+      const files = Array.from(imgInput.files || []);
+      if (!files.length) return;
+      if (campaignImages.length + files.length > 5) {
+        say("MAX 5 PHOTOS", "You can attach a maximum of 5 photos per campaign.");
+        return;
+      }
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) continue;
+        const dataUrl = await readFileAsDataUrl(file);
+        campaignImages.push(dataUrl);
+      }
+      renderThumbnails();
+      imgInput.value = "";
+    };
+
+    function renderThumbnails() {
+      if (!campaignImages.length) {
+        imgThumbnails.innerHTML = `<span id="waImgPlaceholder" style="font-size:11px;color:var(--muted);padding:4px">No photos attached (Optional)</span>`;
+        return;
+      }
+      imgThumbnails.innerHTML = campaignImages.map((src, idx) => `
+        <div style="position:relative;width:44px;height:44px;border-radius:4px;overflow:hidden;border:1px solid var(--line)">
+          <img src="${src}" style="width:100%;height:100%;object-fit:cover">
+          <button type="button" data-del="${idx}" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.7);color:#fff;border:none;width:16px;height:16px;font-size:10px;cursor:pointer;line-height:16px;padding:0;text-align:center">&times;</button>
+        </div>
+      `).join("");
+
+      imgThumbnails.querySelectorAll("[data-del]").forEach(b => {
+        b.onclick = (e) => {
+          e.stopPropagation();
+          const delIdx = Number(b.getAttribute("data-del"));
+          campaignImages.splice(delIdx, 1);
+          renderThumbnails();
+        };
+      });
+    }
+
+    box.querySelector("#waBtnExportVcfQuick").onclick = () => {
+      exportSelectedToVcf();
+    };
+
+    box.querySelectorAll("[data-close]").forEach(b => {
+      b.onclick = () => {
+        if (isRunning) {
+          if (!confirm("A campaign is currently in progress. Stop and close?")) return;
+        }
+        cleanup();
+        close(null);
+      };
+    });
+
+    btnPause.onclick = () => {
+      if (!isRunning) return;
+      isPaused = !isPaused;
+      if (isPaused) {
+        btnPause.textContent = "▶ RESUME";
+        btnPause.classList.remove("red");
+        btnPause.classList.add("blue");
+        if (timerId) clearTimeout(timerId);
+      } else {
+        btnPause.textContent = "❚❚ PAUSE";
+        btnPause.classList.remove("blue");
+        btnPause.classList.add("red");
+        sendNext();
+      }
+    };
+
+    btnStart.onclick = () => {
+      if (isRunning) return;
+      const rawMsg = txtTemplate.value.trim();
+      if (!rawMsg && !campaignImages.length) {
+        return say("EMPTY MESSAGE", "Please type a message template or attach photos to begin.");
+      }
+
+      isRunning = true;
+      btnStart.disabled = true;
+      btnStart.style.opacity = "0.5";
+      btnPause.style.display = "inline-block";
+      txtTemplate.disabled = true;
+      delaySlider.disabled = true;
+
+      sendNext();
+    };
+
+    function cleanup() {
+      isRunning = false;
+      if (timerId) clearTimeout(timerId);
+    }
+
+    function sendNext() {
+      if (!isRunning || isPaused) return;
+
+      if (currentIdx >= clients.length) {
+        cleanup();
+        btnPause.style.display = "none";
+        btnStart.textContent = "✔ CAMPAIGN COMPLETED";
+        btnStart.classList.remove("green");
+        btnStart.classList.add("blue");
+        say("CAMPAIGN FINISHED", `Successfully processed all ${clients.length} clients in the broadcast campaign.`);
+        return;
+      }
+
+      const client = clients[currentIdx];
+      const phone = (client.phone || client.phone2 || client.phone3 || "").replace(/\D/g, "");
+      const statusCell = box.querySelector(`#waStatus_${currentIdx}`);
+
+      if (!phone) {
+        if (statusCell) statusCell.innerHTML = `<span style="color:var(--red,#ef4444)">No Phone</span>`;
+        currentIdx++;
+        progressLabel.textContent = `${currentIdx} / ${clients.length} Done`;
+        sendNext();
+        return;
+      }
+
+      if (statusCell) statusCell.innerHTML = `<span style="color:var(--gold)">Sending...</span>`;
+
+      const companyName = client.company || client.name || "Customer";
+      let msg = txtTemplate.value
+        .replace(/\{Name\}/gi, companyName)
+        .replace(/\{City\}/gi, client.city || "")
+        .replace(/\{Phone\}/gi, phone)
+        .replace(/\{Date\}/gi, new Date().toLocaleDateString("en-IN"));
+
+      const delaySec = Number(delaySlider.value) || 6;
+
+      // On iOS Safari / Web: launch WhatsApp chat directly
+      const formattedPhone = phone.length === 10 ? `91${phone}` : phone;
+      const url = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank");
+      if (statusCell) statusCell.innerHTML = `<span style="color:var(--forest,#16a34a);font-weight:700">Opened ✔</span>`;
+
+      currentIdx++;
+      progressLabel.textContent = `${currentIdx} / ${clients.length} Done`;
+
+      const jitter = (Math.random() * 2 - 1) * 1500;
+      const actualDelay = Math.max(3000, (delaySec * 1000) + jitter);
+
+      timerId = setTimeout(() => {
+        sendNext();
+      }, actualDelay);
+    }
+  });
+}
+
 
 /* ============================================================ stickers */
 $("btnStickers").addEventListener("click", async () => {
@@ -3416,6 +3792,7 @@ function wireLogo(imageId, wordmarkId) {
   }
   initBiometrics();
   window.setupBiometrics = initBiometrics;
+  setTimeout(() => { if (typeof PalakAppleBiometrics !== "undefined" && PalakAppleBiometrics.isSupported() && localStorage.getItem("apple_faceid_registered") === "true") { try { PalakAppleBiometrics.authenticate(); } catch(e){} } }, 350);
 
   window.onBiometricSuccess = async (username) => {
     if (!isDeviceAuthorized()) {

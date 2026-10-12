@@ -1,4 +1,4 @@
-const CACHE_NAME = "palak-crm-v1";
+const CACHE_NAME = "palak-crm-v2-1791825847702";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
@@ -6,7 +6,8 @@ const ASSETS_TO_CACHE = [
   "./apple-touch-icon.png",
   "./icon-192.png",
   "./icon-512.png",
-  "./logo.png"
+  "./logo.png",
+  "./Palak_Key_Generator.html"
 ];
 
 // 1. Install Event - Pre-cache all core CRM files
