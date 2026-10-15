@@ -461,10 +461,16 @@
     position: fixed;
     inset: 0;
     z-index: 1000;
-    background: rgba(5,7,12,.62);
-    display: grid;
-    place-items: center;
-    padding: 20px;
+    background: rgba(5,7,12,.68);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
   }
   body:has(.veil) #menuBtn,
   body.modal-open #menuBtn {
@@ -472,11 +478,16 @@
   }
   .modal {
     width: min(440px, 96vw);
+    max-width: 96vw;
+    max-height: 92vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    margin: auto;
     background: var(--panel);
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: var(--shadow);
-    padding: 20px;
+    padding: 22px;
     display: grid;
     gap: 14px;
   }
@@ -1715,6 +1726,8 @@ function show(name) {
   $("sidebar").classList.toggle("hidden", hideSide);
   const hideMenu = (name === "client" || name === "voucher" || name === "accounts" || name === "scanner");
   if ($("menuBtn")) $("menuBtn").classList.toggle("hidden", hideMenu);
+  closeDrawer();
+  applyRoleVisibility();
 }
 
 window.handleNativeBack = function() {
@@ -3892,6 +3905,20 @@ function wireLogo(imageId, wordmarkId) {
 }
 
 (function start() {
+  // Universal Modal Observer: Ensures #menuBtn is 100% hidden whenever ANY modal/veil opens on every browser/device since 2012
+  if (typeof MutationObserver !== "undefined" && typeof document !== "undefined") {
+    new MutationObserver(() => {
+      const hasModal = !!document.querySelector(".veil");
+      document.body.classList.toggle("modal-open", hasModal);
+      const menuBtn = document.getElementById("menuBtn");
+      if (menuBtn && hasModal) {
+        menuBtn.style.setProperty("display", "none", "important");
+      } else if (menuBtn && !hasModal && !menuBtn.classList.contains("hidden")) {
+        menuBtn.style.removeProperty("display");
+      }
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  }
+
   // Mobile Menu Drawer Logic
   const menuBtn = $("menuBtn");
   if (menuBtn) {
