@@ -588,12 +588,18 @@
       -webkit-overflow-scrolling: touch;
       margin-bottom: 10px;
     }
+    #screenHome {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 20px);
+    }
     #screenDashboard.active {
       flex: 1 1 auto;
       display: flex;
       flex-direction: column;
       height: 100%;
       min-height: 0;
+    }
+    #screenDashboard .toolbar {
+      padding-left: calc(env(safe-area-inset-left, 0px) + 54px);
     }
     #screenVoucher.active {
       display: flex;
@@ -1693,7 +1699,8 @@ function show(name) {
   Object.keys(SCREENS).forEach(key => { $(SCREENS[key]).classList.toggle("active", key === name); });
   const hideSide = (name === "client" || name === "voucher");
   $("sidebar").classList.toggle("hidden", hideSide);
-  if ($("menuBtn")) $("menuBtn").classList.toggle("hidden", hideSide);
+  const hideMenu = (name === "client" || name === "voucher" || name === "accounts" || name === "scanner");
+  if ($("menuBtn")) $("menuBtn").classList.toggle("hidden", hideMenu);
   closeDrawer();
   applyRoleVisibility();
 }

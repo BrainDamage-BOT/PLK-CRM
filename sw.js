@@ -1,4 +1,4 @@
-const CACHE_NAME = "palak-crm-v2-1791828550000";
+const CACHE_NAME = "palak-crm-v2-1792036500000";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
