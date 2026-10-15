@@ -460,11 +460,15 @@
   .veil {
     position: fixed;
     inset: 0;
-    z-index: 80;
+    z-index: 1000;
     background: rgba(5,7,12,.62);
     display: grid;
     place-items: center;
     padding: 20px;
+  }
+  body:has(.veil) #menuBtn,
+  body.modal-open #menuBtn {
+    display: none !important;
   }
   .modal {
     width: min(440px, 96vw);
@@ -1140,10 +1144,20 @@ function pyFloat(value) {
 /* ============================================================ dialogs */
 function modal(build) {
   return new Promise(resolve => {
+    document.body.classList.add("modal-open");
     const veil = document.createElement("div"); veil.className = "veil";
     const box = document.createElement("div"); box.className = "modal"; veil.appendChild(box);
     let done = false;
-    const close = value => { if (done) return; done = true; document.removeEventListener("keydown", onKey, true); veil.remove(); resolve(value); };
+    const close = value => {
+      if (done) return;
+      done = true;
+      document.removeEventListener("keydown", onKey, true);
+      veil.remove();
+      if (!document.querySelector(".veil")) {
+        document.body.classList.remove("modal-open");
+      }
+      resolve(value);
+    };
     const onKey = event => { if (event.key === "Escape") { event.stopPropagation(); close(null); } };
     document.addEventListener("keydown", onKey, true);
     veil.addEventListener("mousedown", event => { if (event.target === veil) close(null); });
@@ -1701,9 +1715,63 @@ function show(name) {
   $("sidebar").classList.toggle("hidden", hideSide);
   const hideMenu = (name === "client" || name === "voucher" || name === "accounts" || name === "scanner");
   if ($("menuBtn")) $("menuBtn").classList.toggle("hidden", hideMenu);
-  closeDrawer();
-  applyRoleVisibility();
 }
+
+window.handleNativeBack = function() {
+  // 1. If an active modal / veil is open, close the topmost modal
+  const openVeils = document.querySelectorAll(".veil");
+  if (openVeils.length > 0) {
+    const topmost = openVeils[openVeils.length - 1];
+    const closeBtn = topmost.querySelector("[data-close]");
+    if (closeBtn) {
+      closeBtn.click();
+      return true;
+    }
+    topmost.remove();
+    if (!document.querySelector(".veil")) {
+      document.body.classList.remove("modal-open");
+    }
+    return true;
+  }
+
+  // 2. If mobile sidebar drawer is open, close it
+  const sidebar = $("sidebar");
+  if (sidebar && (sidebar.classList.contains("open") || sidebar.classList.contains("active"))) {
+    closeDrawer();
+    return true;
+  }
+
+  // 3. If wastage modal/screen is open on client form, close it
+  const wastageScreen = $("clientWastage");
+  if (wastageScreen && !wastageScreen.hidden) {
+    closeWastageScreen();
+    return true;
+  }
+
+  // 4. If on client edit form, trigger clientBack (with dirty check)
+  if (currentScreen === "client") {
+    const backBtn = $("clientBack");
+    if (backBtn) {
+      backBtn.click();
+      return true;
+    }
+  }
+
+  // 5. If on other sub-screens (dashboard, accounts, voucher, scanner), navigate back
+  if (currentScreen !== "home") {
+    screenStack.pop();
+    const prev = screenStack.pop() || "home";
+    if (prev === "dashboard") {
+      openDashboard();
+    } else {
+      show(prev);
+    }
+    return true;
+  }
+
+  // At root home screen: return false
+  return false;
+};
 
 function isSuperadmin() { return !!(S.user && S.user.role === "superadmin"); }
 function applyRoleVisibility() { document.querySelectorAll("[data-admin]").forEach(el => { el.hidden = !isSuperadmin(); }); }
